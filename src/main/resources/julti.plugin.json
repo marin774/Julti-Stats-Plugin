@@ -1,0 +1,6 @@
+{
+  "name": "Stats",
+  "id": "julti-stats-plugin",
+  "version": "${version}",
+  "initializer": "me.marin.statsplugin.StatsPlugin"
+}
