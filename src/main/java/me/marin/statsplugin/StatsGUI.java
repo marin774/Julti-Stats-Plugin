@@ -69,7 +69,7 @@ public class StatsGUI extends JFrame {
         importCredentialsJsonButton.addActionListener(a -> {
             try {
                 JFileChooser chooser = new JFileChooser();
-                FileNameExtensionFilter filter = new FileNameExtensionFilter(".json", "json");
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("*.json", "json");
                 chooser.setFileFilter(filter);
                 int returnVal = chooser.showOpenDialog(null);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -97,7 +97,7 @@ public class StatsGUI extends JFrame {
         importSettingsJsonButton.addActionListener(a -> {
             try {
                 JFileChooser chooser = new JFileChooser();
-                FileNameExtensionFilter filter = new FileNameExtensionFilter(".json", "json");
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("*.json", "json");
                 chooser.setFileFilter(filter);
                 int returnVal = chooser.showOpenDialog(null);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -131,7 +131,7 @@ public class StatsGUI extends JFrame {
                 }
 
                 JFileChooser chooser = new JFileChooser();
-                FileNameExtensionFilter filter = new FileNameExtensionFilter(".csv", "csv");
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("*.csv", "csv");
                 chooser.setFileFilter(filter);
                 int returnVal = chooser.showOpenDialog(null);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -236,7 +236,7 @@ public class StatsGUI extends JFrame {
     private void $$$setupUI$$$() {
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
-        mainPanel.setPreferredSize(new Dimension(600, 450));
+        mainPanel.setPreferredSize(new Dimension(600, 250));
         mainPanel.setRequestFocusEnabled(true);
         mainPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         trackerEnabledCheckbox = new JCheckBox();
@@ -304,7 +304,7 @@ public class StatsGUI extends JFrame {
         openStatsCsv.setText("Open stats.csv");
         panel3.add(openStatsCsv, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel4 = new JPanel();
-        panel4.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel4.setLayout(new GridLayoutManager(2, 3, new Insets(0, 0, 0, 0), -1, -1));
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -320,6 +320,9 @@ public class StatsGUI extends JFrame {
         reloadSettingsButton = new JButton();
         reloadSettingsButton.setText("Reload settings");
         panel4.add(reloadSettingsButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        clearSpeedrunIGTRecordsButton = new JButton();
+        clearSpeedrunIGTRecordsButton.setText("Clear SpeedrunIGT records");
+        panel4.add(clearSpeedrunIGTRecordsButton, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JSeparator separator1 = new JSeparator();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -334,13 +337,6 @@ public class StatsGUI extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(10, 0, 10, 0);
         mainPanel.add(separator2, gbc);
-        final JSeparator separator3 = new JSeparator();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(10, 0, 10, 0);
-        mainPanel.add(separator3, gbc);
     }
 
     /**
