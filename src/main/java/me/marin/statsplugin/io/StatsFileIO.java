@@ -1,13 +1,13 @@
 package me.marin.statsplugin.io;
 
-import com.google.common.io.Files;
 import me.marin.statsplugin.stats.StatsCSVRecord;
+import org.apache.logging.log4j.Level;
+import xyz.duncanruns.julti.Julti;
+import xyz.duncanruns.julti.util.ExceptionUtil;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 public class StatsFileIO {
@@ -38,7 +38,7 @@ public class StatsFileIO {
             writer.write(statsRecord.toCSVLine());
             writer.newLine();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            Julti.log(Level.ERROR, "Error while writing stats to stats.csv:\n" + ExceptionUtil.toDetailedString(e));
         }
         /*try (ReversedLinesFileReader reader = new ReversedLinesFileReader(path, StandardCharsets.UTF_8); RandomAccessFile writer = new RandomAccessFile(path.toFile(), "rw")) {
             String lastLine = reader.readLine();
@@ -58,7 +58,7 @@ public class StatsFileIO {
     }
 
     public List<StatsCSVRecord> getAllStats() {
-        try (BufferedReader reader = Files.newReader(STATS_CSV_PATH.toFile(), StandardCharsets.UTF_8)) {
+        /*try (BufferedReader reader = Files.newReader(STATS_CSV_PATH.toFile(), StandardCharsets.UTF_8)) {
             List<StatsCSVRecord> records = new ArrayList<>();
             String line;
             while ((line = reader.readLine()) != null) {
@@ -68,7 +68,8 @@ public class StatsFileIO {
             return records;
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
+        }*/
+        throw new UnsupportedOperationException();
     }
 
     public Path getPath() {

@@ -81,12 +81,4 @@ public record StatsCSVRecord(String dateTime,
         return new StatsCSVRecord(parts[0], parts[1], parts[2], parts[4], parts[5], parts[6], parts[7], parts[8], parts[9], parts[10], parts[11], parts[12], parts[13], parts[14], parts[15], parts[17], parts[18], parts[25], parts[26], parts[27], parts[28], parts[29], parts[30], parts[31], parts[32]);
     }
 
-    public RunData toRunData() {
-        return new RunData(parseString(iron), parseString(wood), parseString(ironPickaxe), parseString(nether), parseString(bastion), parseString(fortress), parseString(netherExit), parseString(stronghold), parseString(end));
-    }
-
-    private static Long parseString(String s) {
-        return s.equals("null") ? null : Long.parseLong(s);
-    }
-
 }
