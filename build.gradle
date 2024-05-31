@@ -13,6 +13,11 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
+configurations {
+    provided
+    compile.extendsFrom provided
+}
+
 group = project.maven_group
 version = project.plugin_version
 archivesBaseName = project.archives_base_name
@@ -28,13 +33,13 @@ repositories {
 
 dependencies {
     // Choose Julti version: https://jitpack.io/#DuncanRuns/Julti
-    implementation 'com.github.DuncanRuns:Julti:v1.4.3'
+    compileOnly 'com.github.DuncanRuns:Julti:v1.4.3'
     // GUI designer
     // compileOnly "com.intellij:forms_rt:7.0.3"
 
     // Google Sheets API
-    implementation 'com.google.apis:google-api-services-sheets:v4-rev20220927-2.0.0'
-    implementation 'com.google.auth:google-auth-library-oauth2-http:1.16.1'
+    shadow 'com.google.apis:google-api-services-sheets:v4-rev20220927-2.0.0'
+    shadow 'com.google.auth:google-auth-library-oauth2-http:1.16.1'
 }
 
 
@@ -53,4 +58,12 @@ shadowJar {
         exclude 'META-INF/versions/9/module-info.class'
         exclude 'org/apache/commons/logging/impl/ServletContextCleaner.class'
     }
+    configurations = [project.configurations.shadow]
+}
+
+var home = System.getProperty('user.home')
+var jultiPluginsFolderPath = "${home}/.Julti/plugins"
+task copyJar(type: Copy) {
+    from shadowJar // shortcut for createJar.outputs.files
+    into jultiPluginsFolderPath
 }

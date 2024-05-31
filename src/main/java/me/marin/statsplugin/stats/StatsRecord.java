@@ -66,6 +66,7 @@ public record StatsRecord(String dateTime,
     }
 
     private static String formatForSheets(Long time) {
+        if (time == null) return "";
         return "*" + formatTime(time);
     }
 

@@ -121,21 +121,24 @@ public class RecordParser {
     }
 
     public boolean hasObtainedPickaxe() {
-        return advKeys.contains("minecraft:recipes/tools/iron_pickaxe") || craftedKeys.contains("minecraft:diamond_pickaxe");
+        if (craftedKeys.contains("minecraft:diamond_pickaxe")) return true;
+        JsonObject ironPickaxe = getNestedJSONObject(adv, "minecraft:story/iron_tools", "criteria", "iron_pickaxe");
+        return (ironPickaxe != null);
     }
 
     public Long getPickaxeTime() {
-        if (advKeys.contains("minecraft:recipes/tools/iron_pickaxe")) {
-            JsonObject obtainedPickaxe = getNestedJSONObject(adv, "minecraft:recipes/tools/iron_pickaxe");
-            JsonElement time = obtainedPickaxe.get("igt");
+        JsonObject ironPickaxe = getNestedJSONObject(adv, "minecraft:story/iron_tools", "criteria", "iron_pickaxe");
+        if (ironPickaxe == null) return null;
+        return ironPickaxe.get("igt").getAsLong();
+        /*
             return (time == null || time.isJsonNull()) ? null : time.getAsLong();
         } else {
-            /* TODO: check if this actually works (diamond pickaxe craft igt == iron/gold axe craft igt)
+            TODO: check if this actually works (diamond pickaxe craft igt == iron/gold axe craft igt)
             if (craftedKeys.contains("minecraft:diamond_pickaxe")) {
                 if (advKeys.contains("minecraft:recipes/misc/gold_nugget_from_smelting"))
-            }*/
+            }
         }
-        return null;
+        */
     }
 
 
