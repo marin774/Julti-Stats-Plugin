@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import me.marin.statsplugin.StatsPlugin;
 import me.marin.statsplugin.StatsPluginUtil;
 import me.marin.statsplugin.stats.StatsRecord;
+import xyz.duncanruns.julti.JultiOptions;
 import xyz.duncanruns.julti.management.ActiveWindowManager;
 
 import java.io.File;
@@ -12,10 +13,11 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class RecordsFolderWatcher extends FileWatcher {
-
 
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("M/d/yyyy HH:mm:ss");
     private static final String SESSION_MARKER = "$J" + StatsPlugin.VERSION;
@@ -32,6 +34,9 @@ public class RecordsFolderWatcher extends FileWatcher {
 
     private boolean isFirstRun = true;
 
+    // Completed runs get updated on completion and on reset, which means they would get tracked twice - this prevents that.
+    private final List<String> completedRunsRecordIds = new ArrayList<>();
+
     public RecordsFolderWatcher(Path path) {
         super(path.toFile());
     }
@@ -42,6 +47,12 @@ public class RecordsFolderWatcher extends FileWatcher {
     @Override
     protected void handleFileUpdated(File file) {
         if (!StatsPluginSettings.getInstance().trackerEnabled) {
+            return;
+        }
+        if (completedRunsRecordIds.contains(file.getName())) {
+            return;
+        }
+        if (JultiOptions.getJultiOptions().resetStyle.equals("Benchmark")) {
             return;
         }
 
@@ -55,6 +66,10 @@ public class RecordsFolderWatcher extends FileWatcher {
 
         long now = System.currentTimeMillis();
         long finalRTA = recordJSON.get("final_rta").getAsLong();
+        Long LAN = recordParser.getOpenLAN();
+        if (LAN != null && LAN <= finalRTA) {
+            finalRTA = LAN;
+        }
 
         // Calculate wall breaks
         if (lastActionMillis > 0) {
@@ -113,6 +128,10 @@ public class RecordsFolderWatcher extends FileWatcher {
                 isFirstRun ? SESSION_MARKER : "",
                 RTADistribution
         );
+
+        if (recordParser.isCompleted()) {
+            completedRunsRecordIds.add(file.getName());
+        }
 
         StatsPlugin.CURRENT_SESSION.addRun(csvRecord);
         StatsFileIO.getInstance().writeStats(csvRecord);

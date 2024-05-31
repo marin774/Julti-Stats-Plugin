@@ -4,14 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import me.marin.statsplugin.StatsPluginUtil;
-import org.apache.logging.log4j.Level;
-import xyz.duncanruns.julti.Julti;
 
 import java.io.File;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -97,6 +91,10 @@ public class RecordParser {
         return 0;
     }
 
+    public boolean isCompleted() {
+        return record.get("is_completed").getAsBoolean();
+    }
+
     public boolean hasObtainedWood() {
         return advKeys.contains("minecraft:recipes/misc/charcoal");
     }
@@ -106,7 +104,12 @@ public class RecordParser {
         JsonObject criteria = getNestedJSONObject(adv, "minecraft:recipes/misc/charcoal", "criteria");
         if (!criteria.keySet().contains("has_log")) return null;
         JsonObject hasLog = getNestedJSONObject(criteria, "has_log");
-        return getLong(hasLog, "igt");
+        long time = getLong(hasLog, "igt");
+        Long LAN = getOpenLAN();
+        if (LAN != null && LAN <= time) {
+            return null;
+        }
+        return time;
     }
 
     public boolean hasObtainedIron() {
@@ -116,8 +119,17 @@ public class RecordParser {
     public Long getIronObtainedTime() {
         if (!hasObtainedIron()) return null;
         JsonObject obtainedIron = getNestedJSONObject(adv, "minecraft:story/smelt_iron");
-        JsonElement time = obtainedIron.get("igt");
-        return (time == null || time.isJsonNull()) ? null : time.getAsLong();
+        JsonElement timeElement = obtainedIron.get("igt");
+        if (timeElement == null || timeElement.isJsonNull()) {
+            return null;
+        }
+
+        Long LAN = getOpenLAN();
+        long time = timeElement.getAsLong();
+        if (LAN != null && LAN <= time) {
+            return null;
+        }
+        return time;
     }
 
     public boolean hasObtainedPickaxe() {
@@ -129,7 +141,12 @@ public class RecordParser {
     public Long getPickaxeTime() {
         JsonObject ironPickaxe = getNestedJSONObject(adv, "minecraft:story/iron_tools", "criteria", "iron_pickaxe");
         if (ironPickaxe == null) return null;
-        return ironPickaxe.get("igt").getAsLong();
+        Long LAN = getOpenLAN();
+        long time = ironPickaxe.get("igt").getAsLong();
+        if (LAN != null && LAN <= time) {
+            return null;
+        }
+        return time;
         /*
             return (time == null || time.isJsonNull()) ? null : time.getAsLong();
         } else {
@@ -284,13 +301,26 @@ public class RecordParser {
     public long getIGT() {
         return getLong(record, "final_igt");
     }
+    public Long getOpenLAN() {
+        JsonElement element = record.get("open_lan");
+        if (element.isJsonNull()) {
+            return null;
+        }
+        return element.getAsLong();
+    }
 
     public Map<String, Long> getTimelinesMap() {
         JsonArray timelines = record.get("timelines").getAsJsonArray();
         Map<String, Long> map = new LinkedHashMap<>();
+        Long LAN = getOpenLAN();
         for (JsonElement element : timelines) {
             JsonObject obj = element.getAsJsonObject();
-            map.put(obj.get("name").getAsString(), obj.get("igt").getAsLong());
+            long time = obj.get("igt").getAsLong();
+            if (LAN != null && LAN <= time) {
+                // Split was cheated
+                continue;
+            }
+            map.put(obj.get("name").getAsString(), time);
         }
         return map;
     }

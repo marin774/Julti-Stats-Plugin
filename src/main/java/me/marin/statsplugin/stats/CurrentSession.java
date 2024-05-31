@@ -11,12 +11,14 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class CurrentSession {
 
     private final List<StatsRecord> records = new ArrayList<>();
 
     public void addRun(StatsRecord record) {
+        Julti.log(Level.INFO, "Added this run, updating overlay: " + record);
         records.add(record);
         updateOverlay();
     }
@@ -29,7 +31,7 @@ public class CurrentSession {
         try {
             String template = Files.readString(StatsPlugin.OBS_OVERLAY_TEMPLATE_PATH);
             template = template.replaceAll("%enters%", String.valueOf(enters));
-            template = template.replaceAll("%nph%", Double.isNaN(nph) ? "" : String.format("%.1f", nph));
+            template = template.replaceAll("%nph%", Double.isNaN(nph) ? "" : String.format(Locale.US, "%.1f", nph));
             template = template.replaceAll("%average%", StatsPluginUtil.formatTime((long)average, false));
 
             Files.writeString(StatsPlugin.OBS_OVERLAY_PATH, template, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
@@ -59,10 +61,14 @@ public class CurrentSession {
         for (StatsRecord record : records) {
             totalTimePlayedMillis += record.wallTimeSincePrev();
             totalTimePlayedMillis += record.RTA();
+            if (record.nether() != null) {
+                // Don't count nether time
+                totalTimePlayedMillis -= record.RTA() - record.nether();
+            }
             totalTimePlayedMillis += record.RTASincePrev();
         }
-
-        return 60 / ((double) totalTimePlayedMillis / enters);
+        double totalTimePlayedMinutes = (double) totalTimePlayedMillis / 1000 / 60;
+        return 60 / (totalTimePlayedMinutes / enters);
     }
 
 
