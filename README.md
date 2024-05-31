@@ -1,5 +1,5 @@
 # Julti Stats Plugin
-A Julti plugin to make tracking stats even easier. This tracker supports [pncakespoons's existing tracker](https://github.com/pncakespoon1/ResetTracker) and it works with the [Stats Website](https://reset-analytics-dev.vercel.app/).
+A Julti plugin to make tracking stats even easier. This tracker works almost the same as [pncakespoons's existing tracker](https://github.com/pncakespoon1/ResetTracker) and it works with the [Stats Website](https://reset-analytics-dev.vercel.app/).
 
 
 ## Installation
