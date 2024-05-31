@@ -75,7 +75,7 @@ public class RecordsFolderWatcher extends FileWatcher {
         if (lastActionMillis > 0) {
             long delta = now - lastActionMillis - finalRTA;
             if (delta > 0 && ActiveWindowManager.isWallActive()) {
-                if (delta > StatsPluginSettings.getInstance().breakThreshold) {
+                if (delta > StatsPluginSettings.getInstance().breakThreshold * 1000L) {
                     breakRTASincePrev += delta;
                 } else {
                     wallTimeSincePrev += delta;
