@@ -1,16 +1,18 @@
 # Julti Stats Plugin
-A Julti plugin to make tracking stats even easier. This tracker supports [pncakespoons's existing tracker](https://github.com/pncakespoon1/ResetTracker/releases/tag/2.0.12) and it works with the [Stats Website](https://reset-analytics-dev.vercel.app/).
+A Julti plugin to make tracking stats even easier. This tracker supports [pncakespoons's existing tracker](https://github.com/pncakespoon1/ResetTracker) and it works with the [Stats Website](https://reset-analytics-dev.vercel.app/).
 
 
 ## Installation
 Download the latest version from the [Releases page](https://github.com/marin774/Julti-Stats-Plugin/releases), then drag and drop into your Julti plugins folder, and restart Julti.
 
 ## Migrating from pncakespoon's tracker
-Once installed, open the "Plugins" tab in Julti. Click "Open Config" next to Stats Plugin.
-1. Click on **`Import settings.json`**. Locate the old tracker, and find `settings.json` in the `data` folder.
-2. Click on **`Import credentials.json`**. Locate the old tracker, and find `credentials.json`.
+Once you installed the plugin and restarter Julti, follow these steps to migrate:
+1. Open the "Plugins" tab in Julti.
+2. Click on "Open Config" next to Stats Plugin.
+3. Click on **`Import settings.json`**. Locate the old tracker, and find `settings.json` in the `data` folder.
+4. Click on **`Import credentials.json`**. Locate the old tracker, and find `credentials.json`.
 > Plugin will now attempt to connect to Google Sheets.
-3. (**OPTIONAL**) Click on **`Import stats.csv`**. Locate the old tracker, and find `stats.csv` in the `data` folder.
+5. (**OPTIONAL**) Click on **`Import stats.csv`**. Locate the old tracker, and find `stats.csv` in the `data` folder.
 
 
 > Note: Some stats that aren't being used won't be tracked with this plugin. This includes dropped gold, blocks mined, pearls thrown, deaths etc. They might be added in a future update.
@@ -23,4 +25,4 @@ Once installed, open the "Plugins" tab in Julti. Click "Open Config" next to Sta
 - You can also manually clear SpeedrunIGT records.
 
 
-### this is a wip wawawawawawawawa contact me on discord @marin774
+### this is a wip, contact me on discord @marin774
