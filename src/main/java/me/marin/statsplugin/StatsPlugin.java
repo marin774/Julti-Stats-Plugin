@@ -23,7 +23,7 @@ import java.nio.file.Paths;
 
 public class StatsPlugin implements PluginInitializer {
 
-    public static final String VERSION = "0.2";
+    public static final String VERSION = "0.3";
 
     public static final Path STATS_FOLDER_PATH = JultiOptions.getJultiDir().resolve("stats-plugin");
     public static final Path GOOGLE_SHEETS_CREDENTIALS_PATH = STATS_FOLDER_PATH.resolve("credentials.json");
