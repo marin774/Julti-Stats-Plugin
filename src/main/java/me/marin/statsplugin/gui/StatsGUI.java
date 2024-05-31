@@ -1,7 +1,8 @@
-package me.marin.statsplugin;
+package me.marin.statsplugin.gui;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import me.marin.statsplugin.StatsPluginUtil;
 import me.marin.statsplugin.io.OldRecordBopperRunnable;
 import me.marin.statsplugin.io.StatsFileIO;
 import me.marin.statsplugin.io.StatsPluginSettings;
@@ -42,12 +43,16 @@ public class StatsGUI extends JFrame {
     private JButton openStatsBrowserButton;
     private JButton reloadSettingsButton;
     private JButton clearSpeedrunIGTRecordsButton;
+    private JButton OBSOverlayButton;
+
+    private OBSOverlayGUI obsOverlayGUI;
 
     public StatsGUI() {
         this.setContentPane(mainPanel);
-        this.setTitle("Stats Plugin");
+        this.setTitle("Stats Plugin Config");
         this.pack();
         this.setVisible(true);
+        this.setResizable(false);
         this.setLocation(JultiGUI.getJultiGUI().getLocation());
 
         this.addWindowListener(new WindowAdapter() {
@@ -213,6 +218,14 @@ public class StatsGUI extends JFrame {
             JOptionPane.showMessageDialog(null, "Clearing records, check Julti logs for more information.");
         });
 
+        OBSOverlayButton.addActionListener(a -> {
+            if (obsOverlayGUI == null || obsOverlayGUI.isClosed()) {
+                obsOverlayGUI = new OBSOverlayGUI();
+            } else {
+                obsOverlayGUI.requestFocus();
+            }
+        });
+
     }
 
     public boolean isClosed() {
@@ -236,7 +249,7 @@ public class StatsGUI extends JFrame {
     private void $$$setupUI$$$() {
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
-        mainPanel.setPreferredSize(new Dimension(600, 250));
+        mainPanel.setPreferredSize(new Dimension(600, 350));
         mainPanel.setRequestFocusEnabled(true);
         mainPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         trackerEnabledCheckbox = new JCheckBox();
@@ -281,6 +294,7 @@ public class StatsGUI extends JFrame {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
+        gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(panel3, gbc);
@@ -304,25 +318,38 @@ public class StatsGUI extends JFrame {
         openStatsCsv.setText("Open stats.csv");
         panel3.add(openStatsCsv, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel4 = new JPanel();
-        panel4.setLayout(new GridLayoutManager(2, 3, new Insets(0, 0, 0, 0), -1, -1));
+        panel4.setLayout(new GridLayoutManager(2, 2, new Insets(5, 0, 5, 0), -1, -1));
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(panel4, gbc);
+        clearSpeedrunIGTRecordsButton = new JButton();
+        clearSpeedrunIGTRecordsButton.setText("Clear SpeedrunIGT records");
+        panel4.add(clearSpeedrunIGTRecordsButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        OBSOverlayButton = new JButton();
+        OBSOverlayButton.setText("Configure OBS overlay");
+        panel4.add(OBSOverlayButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label3 = new JLabel();
         label3.setText("Utility:");
         panel4.add(label3, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JPanel panel5 = new JPanel();
+        panel5.setLayout(new GridLayoutManager(2, 2, new Insets(25, 0, 5, 0), -1, -1));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel1.add(panel5, gbc);
         reconnectToGoogleSheetsButton = new JButton();
         reconnectToGoogleSheetsButton.setText("Reconnect to Google Sheets");
-        panel4.add(reconnectToGoogleSheetsButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel5.add(reconnectToGoogleSheetsButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         reloadSettingsButton = new JButton();
         reloadSettingsButton.setText("Reload settings");
-        panel4.add(reloadSettingsButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        clearSpeedrunIGTRecordsButton = new JButton();
-        clearSpeedrunIGTRecordsButton.setText("Clear SpeedrunIGT records");
-        panel4.add(clearSpeedrunIGTRecordsButton, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel5.add(reloadSettingsButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label4 = new JLabel();
+        label4.setText("Debug:");
+        panel5.add(label4, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JSeparator separator1 = new JSeparator();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;

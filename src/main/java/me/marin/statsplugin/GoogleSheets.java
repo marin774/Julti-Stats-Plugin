@@ -20,8 +20,6 @@ import xyz.duncanruns.julti.util.ExceptionUtil;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class GoogleSheets {
 

@@ -17,12 +17,9 @@ import java.util.TimeZone;
 
 public class RecordsFolderWatcher extends FileWatcher {
 
-    public RecordsFolderWatcher(Path path) {
-        super(path.toFile());
-    }
+    public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
 
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("M/d/yyyy HH:mm:ss");
-    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
     private static final String SESSION_MARKER = "$J" + StatsPlugin.VERSION;
 
     private int wallResetsSincePrev = 0;
@@ -36,6 +33,10 @@ public class RecordsFolderWatcher extends FileWatcher {
     private long lastActionMillis = 0;
 
     private boolean isFirstRun = true;
+
+    public RecordsFolderWatcher(Path path) {
+        super(path.toFile());
+    }
 
     /**
      * Record files get updated on world load start, completion and on reset.
@@ -115,6 +116,7 @@ public class RecordsFolderWatcher extends FileWatcher {
                 RTADistribution
         );
 
+        StatsPlugin.CURRENT_SESSION.addRun(csvRecord);
         StatsFileIO.getInstance().writeStats(csvRecord);
         if (StatsPluginSettings.getInstance().useSheets && StatsPlugin.googleSheets.isConnected()) {
             StatsPlugin.googleSheets.insertRecord(csvRecord);

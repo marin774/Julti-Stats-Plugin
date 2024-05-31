@@ -1,9 +1,12 @@
 package me.marin.statsplugin;
 
 import com.google.common.io.Resources;
+import me.marin.statsplugin.gui.OBSOverlayGUI;
+import me.marin.statsplugin.gui.StatsGUI;
 import me.marin.statsplugin.io.OldRecordBopperRunnable;
 import me.marin.statsplugin.io.RecordsFolderWatcher;
 import me.marin.statsplugin.io.StatsPluginSettings;
+import me.marin.statsplugin.stats.CurrentSession;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.JultiAppLaunch;
@@ -25,6 +28,10 @@ public class StatsPlugin implements PluginInitializer {
     public static final Path STATS_FOLDER_PATH = JultiOptions.getJultiDir().resolve("stats-plugin");
     public static final Path GOOGLE_SHEETS_CREDENTIALS_PATH = STATS_FOLDER_PATH.resolve("credentials.json");
     public static final Path STATS_SETTINGS_PATH = STATS_FOLDER_PATH.resolve("settings.json");
+    public static final Path OBS_OVERLAY_TEMPLATE_PATH = STATS_FOLDER_PATH.resolve("obs-overlay-template");
+    public static final Path OBS_OVERLAY_PATH = STATS_FOLDER_PATH.resolve("obs-overlay.txt");
+
+    public static final CurrentSession CURRENT_SESSION = new CurrentSession();
 
     public static StatsGUI statsGUI;
     public static GoogleSheets googleSheets;
@@ -42,6 +49,7 @@ public class StatsPlugin implements PluginInitializer {
     public void initialize() {
         PluginEvents.RunnableEventType.LAUNCH.register(() -> {
             STATS_FOLDER_PATH.toFile().mkdirs();
+            OBSOverlayGUI.createDefaultFile();
             StatsPluginSettings.load();
             reloadGoogleSheets();
             new Thread(new RecordsFolderWatcher(Paths.get(StatsPluginSettings.getInstance().recordsPath)), "records-folder-watcher").start();
