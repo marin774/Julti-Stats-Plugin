@@ -12,7 +12,7 @@ import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import me.marin.statsplugin.io.StatsPluginSettings;
-import me.marin.statsplugin.stats.StatsCSVRecord;
+import me.marin.statsplugin.stats.StatsRecord;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.util.ExceptionUtil;
@@ -70,7 +70,7 @@ public class GoogleSheets {
 
     private Sheet rawDataSheet;
 
-    public void insertRecord(StatsCSVRecord record) {
+    public void insertRecord(StatsRecord record) {
         try {
             if (rawDataSheet == null) {
                 this.rawDataSheet = service.spreadsheets().getByDataFilter(spreadsheetId, new GetSpreadsheetByDataFilterRequest().setIncludeGridData(false).setDataFilters(

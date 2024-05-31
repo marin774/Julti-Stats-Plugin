@@ -6,8 +6,8 @@
     </constraints>
     <properties>
       <enabled value="true"/>
-      <minimumSize width="400" height="250"/>
-      <preferredSize width="400" height="250"/>
+      <minimumSize width="450" height="250"/>
+      <preferredSize width="450" height="250"/>
     </properties>
     <border type="empty">
       <size top="5" left="5" bottom="5" right="5"/>
@@ -26,15 +26,15 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="50"/>
               </grid>
-              <gridbag top="0" left="5" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
+              <gridbag top="0" left="0" bottom="0" right="5" weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
               <alignmentX value="0.0"/>
               <editable value="false"/>
-              <enabled value="false"/>
+              <enabled value="true"/>
               <maximumSize width="250" height="2147483647"/>
               <minimumSize width="250" height="22"/>
-              <preferredSize width="250" height="22"/>
+              <preferredSize width="300" height="22"/>
               <text value="folder path"/>
             </properties>
           </component>
@@ -77,7 +77,7 @@
           </component>
           <scrollpane id="5dfd">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="1" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <autoscrolls value="false"/>

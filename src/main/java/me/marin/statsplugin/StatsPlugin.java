@@ -49,7 +49,10 @@ public class StatsPlugin implements PluginInitializer {
     public void initialize() {
         PluginEvents.RunnableEventType.LAUNCH.register(() -> {
             STATS_FOLDER_PATH.toFile().mkdirs();
+
             OBSOverlayGUI.createDefaultFile();
+            CURRENT_SESSION.updateOverlay();
+
             StatsPluginSettings.load();
             reloadGoogleSheets();
             new Thread(new RecordsFolderWatcher(Paths.get(StatsPluginSettings.getInstance().recordsPath)), "records-folder-watcher").start();

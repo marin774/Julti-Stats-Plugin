@@ -6,6 +6,10 @@ import com.google.gson.stream.JsonReader;
 
 import java.io.File;
 import java.io.FileReader;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,6 +33,22 @@ public class StatsPluginUtil {
             return matcher.group(1);
         } else {
             return null;
+        }
+    }
+
+    public static final DateTimeFormatter TIME_HOURS_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss.SSS"); // used in stats
+    public static final DateTimeFormatter TIME_MINUTES_FORMATTER = DateTimeFormatter.ofPattern("m:ss.S"); // used in OBS overlay
+    public static String formatTime(Long millis) {
+        return formatTime(millis, true);
+    }
+
+    public static String formatTime(Long millis, boolean hours) {
+        if (millis == null) return "";
+        LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), TimeZone.getTimeZone("UTC").toZoneId());
+        if (hours) {
+            return dateTime.format(TIME_HOURS_FORMATTER);
+        } else {
+            return dateTime.format(TIME_MINUTES_FORMATTER);
         }
     }
 

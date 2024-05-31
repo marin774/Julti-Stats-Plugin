@@ -3,7 +3,7 @@ package me.marin.statsplugin.io;
 import com.google.gson.JsonObject;
 import me.marin.statsplugin.StatsPlugin;
 import me.marin.statsplugin.StatsPluginUtil;
-import me.marin.statsplugin.stats.StatsCSVRecord;
+import me.marin.statsplugin.stats.StatsRecord;
 import xyz.duncanruns.julti.management.ActiveWindowManager;
 
 import java.io.File;
@@ -13,11 +13,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
-import java.util.TimeZone;
 
 public class RecordsFolderWatcher extends FileWatcher {
 
-    public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
 
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("M/d/yyyy HH:mm:ss");
     private static final String SESSION_MARKER = "$J" + StatsPlugin.VERSION;
@@ -88,30 +86,30 @@ public class RecordsFolderWatcher extends FileWatcher {
         String date = LocalDateTime.ofInstant(Instant.ofEpochMilli(recordParser.getDate()), ZoneId.systemDefault()).format(DATETIME_FORMATTER);
         Map<String, Long> timelines = recordParser.getTimelinesMap();
 
-        StatsCSVRecord csvRecord = new StatsCSVRecord(
+        StatsRecord csvRecord = new StatsRecord(
                 date,
                 recordParser.getIronSource(),
                 recordParser.getEnterType(),
                 recordParser.getSpawnBiome(),
-                formatTime(recordParser.getRTA()),
-                formatTime(recordParser.getWoodObtainedTime()),
-                formatTime(recordParser.getPickaxeTime()),
-                formatTime(timelines.get("enter_nether")),
-                formatTime(timelines.get("enter_bastion")),
-                formatTime(timelines.get("enter_fortress")),
-                formatTime(timelines.get("nether_travel")),
-                formatTime(timelines.get("enter_stronghold")),
-                formatTime(timelines.get("enter_end")),
-                formatTime(recordParser.getRTT()),
-                formatTime(recordParser.getIGT()),
+                recordParser.getRTA(),
+                recordParser.getWoodObtainedTime(),
+                recordParser.getPickaxeTime(),
+                timelines.get("enter_nether"),
+                timelines.get("enter_bastion"),
+                timelines.get("enter_fortress"),
+                timelines.get("nether_travel"),
+                timelines.get("enter_stronghold"),
+                timelines.get("enter_end"),
+                recordParser.getRTT(),
+                recordParser.getIGT(),
                 String.valueOf(recordParser.getBlazeRodsPickedUp()),
                 String.valueOf(recordParser.getBlazesKilled()),
-                formatTime(recordParser.getIronObtainedTime()),
+                recordParser.getIronObtainedTime(),
                 String.valueOf(wallResetsSincePrev),
                 String.valueOf(splitlessResets),
-                formatTime(Math.max(0, RTASincePrev)),
-                formatTime(breakRTASincePrev),
-                formatTime(wallTimeSincePrev),
+                Math.max(0, RTASincePrev),
+                breakRTASincePrev,
+                wallTimeSincePrev,
                 isFirstRun ? SESSION_MARKER : "",
                 RTADistribution
         );
@@ -132,10 +130,7 @@ public class RecordsFolderWatcher extends FileWatcher {
 
     }
 
-    private String formatTime(Long millis) {
-        if (millis == null) return "";
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), TimeZone.getTimeZone("UTC").toZoneId()).format(TIME_FORMATTER);
-    }
+
 
     @Override
     protected void handleFileCreated(File file) {

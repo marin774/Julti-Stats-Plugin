@@ -21,7 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.Locale;
 
-import static me.marin.statsplugin.StatsPlugin.OBS_OVERLAY_TEMPLATE_PATH;
+import static me.marin.statsplugin.StatsPlugin.*;
 
 public class OBSOverlayGUI extends JFrame {
 
@@ -48,9 +48,9 @@ public class OBSOverlayGUI extends JFrame {
             }
         });
 
-        folderPathTextPane.setText(OBS_OVERLAY_TEMPLATE_PATH.toAbsolutePath() + ".txt");
+        folderPathTextPane.setText(OBS_OVERLAY_PATH.toAbsolutePath().toString());
         copyFilePathButton.addActionListener(a -> {
-            StringSelection stringSelection = new StringSelection(OBS_OVERLAY_TEMPLATE_PATH.toAbsolutePath() + ".txt");
+            StringSelection stringSelection = new StringSelection(OBS_OVERLAY_PATH.toAbsolutePath().toString());
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(stringSelection, null);
             JOptionPane.showMessageDialog(null, "Copied to clipboard.");
@@ -64,6 +64,7 @@ public class OBSOverlayGUI extends JFrame {
             String text = overlayFormatTextArea.getText();
             try {
                 Files.writeString(OBS_OVERLAY_TEMPLATE_PATH, text, StandardOpenOption.TRUNCATE_EXISTING);
+                CURRENT_SESSION.updateOverlay();
                 JOptionPane.showMessageDialog(null, "Updated overlay template!");
             } catch (IOException e) {
                 Julti.log(Level.ERROR, "Failed to write to obs-overlay-template:\n" + ExceptionUtil.toDetailedString(e));
@@ -106,8 +107,8 @@ public class OBSOverlayGUI extends JFrame {
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
         mainPanel.setEnabled(true);
-        mainPanel.setMinimumSize(new Dimension(400, 250));
-        mainPanel.setPreferredSize(new Dimension(400, 250));
+        mainPanel.setMinimumSize(new Dimension(450, 250));
+        mainPanel.setPreferredSize(new Dimension(450, 250));
         mainPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridBagLayout());
@@ -122,16 +123,16 @@ public class OBSOverlayGUI extends JFrame {
         folderPathTextPane = new JTextPane();
         folderPathTextPane.setAlignmentX(0.0f);
         folderPathTextPane.setEditable(false);
-        folderPathTextPane.setEnabled(false);
+        folderPathTextPane.setEnabled(true);
         folderPathTextPane.setMaximumSize(new Dimension(250, 2147483647));
         folderPathTextPane.setMinimumSize(new Dimension(250, 22));
-        folderPathTextPane.setPreferredSize(new Dimension(250, 22));
+        folderPathTextPane.setPreferredSize(new Dimension(300, 22));
         folderPathTextPane.setText("folder path");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(0, 5, 0, 5);
+        gbc.insets = new Insets(0, 0, 0, 5);
         panel1.add(folderPathTextPane, gbc);
         copyFilePathButton = new JButton();
         copyFilePathButton.setText("Copy File Path");
@@ -159,7 +160,7 @@ public class OBSOverlayGUI extends JFrame {
         panel2.add(label2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JScrollPane scrollPane1 = new JScrollPane();
         scrollPane1.setAutoscrolls(false);
-        panel2.add(scrollPane1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 1, false));
+        panel2.add(scrollPane1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         overlayFormatTextArea = new JTextArea();
         overlayFormatTextArea.setAutoscrolls(false);
         Font overlayFormatTextAreaFont = this.$$$getFont$$$("Monospaced", Font.PLAIN, 14, overlayFormatTextArea.getFont());

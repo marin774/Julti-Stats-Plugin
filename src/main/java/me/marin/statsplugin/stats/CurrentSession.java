@@ -1,56 +1,68 @@
 package me.marin.statsplugin.stats;
 
-import java.time.Instant;
-import java.time.temporal.TemporalAccessor;
+import me.marin.statsplugin.StatsPlugin;
+import me.marin.statsplugin.StatsPluginUtil;
+import org.apache.logging.log4j.Level;
+import xyz.duncanruns.julti.Julti;
+import xyz.duncanruns.julti.util.ExceptionUtil;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static me.marin.statsplugin.io.RecordsFolderWatcher.TIME_FORMATTER;
 
 public class CurrentSession {
 
-    private final List<StatsCSVRecord> records = new ArrayList<>();
+    private final List<StatsRecord> records = new ArrayList<>();
 
-    public void addRun(StatsCSVRecord record) {
+    public void addRun(StatsRecord record) {
         records.add(record);
+        updateOverlay();
     }
 
-    /*
-    TODO: Change StatsCSVRecord to include longs for millis instead of strings (only format when necessary), so i
-    dont have to do all of this magic.
-     */
-    public String calculateEnters() {
-        long enters = records.stream().filter(record -> record.nether().isBlank()).count();
-        return String.valueOf(enters);
+    public void updateOverlay() {
+        long enters = calculateEnters();
+        double average = calculateAverage();
+        double nph = calculateNPH();
+
+        try {
+            String template = Files.readString(StatsPlugin.OBS_OVERLAY_TEMPLATE_PATH);
+            template = template.replaceAll("%enters%", String.valueOf(enters));
+            template = template.replaceAll("%nph%", Double.isNaN(nph) ? "" : String.format("%.1f", nph));
+            template = template.replaceAll("%average%", StatsPluginUtil.formatTime((long)average, false));
+
+            Files.writeString(StatsPlugin.OBS_OVERLAY_PATH, template, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException e) {
+            Julti.log(Level.ERROR, "Failed to update OBS overlay:\n" + ExceptionUtil.toDetailedString(e));
+        }
     }
 
-    public String calculateAverage() {
+    public long calculateEnters() {
+        return records.stream().filter(record -> record.nether() != null).count();
+    }
+
+    public double calculateAverage() {
         long totalMillis = 0;
         int count = 0;
-        for (StatsCSVRecord record : records.stream().filter(record -> !record.nether().isBlank()).collect(Collectors.toList())) {
-            TemporalAccessor accessor = TIME_FORMATTER.parse(record.nether());
-            Instant instant = Instant.from(accessor);
-            totalMillis += instant.toEpochMilli();
+        for (StatsRecord record : records.stream().filter(record -> record.nether() != null).toList()) {
+            totalMillis += record.nether();
             count += 1;
         }
 
-        return String.format("%.1d", totalMillis / count);
+        return (double) totalMillis / count;
     }
 
-    public String calculateNPH() {
-        double nph = 0;
-
+    public double calculateNPH() {
         long totalTimePlayedMillis = 0;
-        /*
-        for (StatsCSVRecord record : records.stream().filter(record -> !record.nether().isBlank()).collect(Collectors.toList())) {
-            TemporalAccessor accessor = TIME_FORMATTER.parse(record.nether());
-            Instant instant = Instant.from(accessor);
-            totalTimePlayedMillis += instant.toEpochMilli();
-            count += 1;
-        }*/
+        long enters = calculateEnters();
+        for (StatsRecord record : records) {
+            totalTimePlayedMillis += record.wallTimeSincePrev();
+            totalTimePlayedMillis += record.RTA();
+            totalTimePlayedMillis += record.RTASincePrev();
+        }
 
-        return String.format("%.1d", nph);
+        return 60 / ((double) totalTimePlayedMillis / enters);
     }
 
 

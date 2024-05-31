@@ -1,6 +1,6 @@
 package me.marin.statsplugin.io;
 
-import me.marin.statsplugin.stats.StatsCSVRecord;
+import me.marin.statsplugin.stats.StatsRecord;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.util.ExceptionUtil;
@@ -33,7 +33,7 @@ public class StatsFileIO {
         }
     }
 
-    public void writeStats(StatsCSVRecord statsRecord) {
+    public void writeStats(StatsRecord statsRecord) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(STATS_CSV_PATH.toFile(), true))) {
             writer.write(statsRecord.toCSVLine());
             writer.newLine();
@@ -57,7 +57,7 @@ public class StatsFileIO {
         }*/
     }
 
-    public List<StatsCSVRecord> getAllStats() {
+    public List<StatsRecord> getAllStats() {
         /*try (BufferedReader reader = Files.newReader(STATS_CSV_PATH.toFile(), StandardCharsets.UTF_8)) {
             List<StatsCSVRecord> records = new ArrayList<>();
             String line;
