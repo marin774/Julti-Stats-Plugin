@@ -6,10 +6,7 @@ import com.google.gson.JsonObject;
 import me.marin.statsplugin.StatsPluginUtil;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class RecordParser {
 
@@ -309,26 +306,31 @@ public class RecordParser {
         return element.getAsLong();
     }
 
+    private static final List<String> TIMELINES_SPLITS = List.of("enter_nether", "enter_bastion", "enter_fortress", "nether_travel", "enter_stronghold", "enter_end");
     public Map<String, Long> getTimelinesMap() {
         JsonArray timelines = record.get("timelines").getAsJsonArray();
         Map<String, Long> map = new LinkedHashMap<>();
         Long LAN = getOpenLAN();
         for (JsonElement element : timelines) {
             JsonObject obj = element.getAsJsonObject();
+            String splitName = obj.get("name").getAsString();
+            if (!TIMELINES_SPLITS.contains(splitName)) {
+                // unimportant split
+                continue;
+            }
             long time = obj.get("igt").getAsLong();
             if (LAN != null && LAN <= time) {
                 // Split was cheated
                 continue;
             }
-            map.put(obj.get("name").getAsString(), time);
+            map.put(splitName, time);
         }
         return map;
     }
 
     public boolean hasDoneAnySplit() {
         if (hasObtainedWood() || hasObtainedIron() || hasObtainedPickaxe()) return true;
-        JsonArray timelines = record.get("timelines").getAsJsonArray();
-        return timelines.size() > 0;
+        return getTimelinesMap().size() > 0;
     }
 
     private static long getAdvancementIGT(JsonObject advancements, String advancement) {
