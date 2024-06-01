@@ -96,14 +96,14 @@ public class RecordParser {
     }
 
     public boolean hasObtainedWood() {
-        return advKeys.contains("minecraft:recipes/misc/charcoal");
+        if (!advKeys.contains("minecraft:recipes/misc/charcoal")) return false;
+        JsonObject criteria = getNestedJSONObject(adv, "minecraft:recipes/misc/charcoal", "criteria");
+        return criteria.keySet().contains("has_log");
     }
 
     public Long getWoodObtainedTime() {
         if (!hasObtainedWood()) return null;
-        JsonObject criteria = getNestedJSONObject(adv, "minecraft:recipes/misc/charcoal", "criteria");
-        if (!criteria.keySet().contains("has_log")) return null;
-        JsonObject hasLog = getNestedJSONObject(criteria, "has_log");
+        JsonObject hasLog = getNestedJSONObject(adv, "minecraft:recipes/misc/charcoal", "criteria", "has_log");
         long time = getLong(hasLog, "igt");
         Long LAN = getOpenLAN();
         if (LAN != null && LAN <= time) {
