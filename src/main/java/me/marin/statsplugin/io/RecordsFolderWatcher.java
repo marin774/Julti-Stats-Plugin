@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 import me.marin.statsplugin.StatsPlugin;
 import me.marin.statsplugin.StatsPluginUtil;
 import me.marin.statsplugin.stats.StatsRecord;
+import org.apache.logging.log4j.Level;
+import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.JultiOptions;
 import xyz.duncanruns.julti.management.ActiveWindowManager;
 
@@ -97,6 +99,8 @@ public class RecordsFolderWatcher extends FileWatcher {
             RTASincePrev += finalRTA;
             return;
         }
+
+        Julti.log(Level.DEBUG, "Done split: " + recordParser.hasObtainedIron() + ", " + recordParser.hasObtainedWood() + ", " + recordParser.hasObtainedWood() + ", " + recordParser.getTimelinesMap());
 
         String date = LocalDateTime.ofInstant(Instant.ofEpochMilli(recordParser.getDate()), ZoneId.systemDefault()).format(DATETIME_FORMATTER);
         Map<String, Long> timelines = recordParser.getTimelinesMap();

@@ -18,7 +18,7 @@ public class CurrentSession {
     private final List<StatsRecord> records = new ArrayList<>();
 
     public void addRun(StatsRecord record) {
-        Julti.log(Level.INFO, "Added this run, updating overlay: " + record);
+        Julti.log(Level.DEBUG, "Added this run, updating overlay: " + record);
         records.add(record);
         updateOverlay();
     }
