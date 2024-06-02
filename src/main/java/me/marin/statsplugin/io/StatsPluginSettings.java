@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
-import xyz.duncanruns.julti.JultiOptions;
 import xyz.duncanruns.julti.util.ExceptionUtil;
 import xyz.duncanruns.julti.util.FileUtil;
 
@@ -16,7 +15,7 @@ import java.nio.file.Path;
 import static me.marin.statsplugin.StatsPlugin.STATS_SETTINGS_PATH;
 
 /**
- * Code stolen from @draconix6
+ * Code template stolen from @draconix6's custom wall plugin
  */
 public class StatsPluginSettings {
 
@@ -27,7 +26,7 @@ public class StatsPluginSettings {
     private static StatsPluginSettings instance = null;
 
     @SerializedName("tracker enabled")
-    public boolean trackerEnabled = false;
+    public boolean trackerEnabled = true;
 
     @SerializedName("sheet link")
     public String sheetLink = null;
