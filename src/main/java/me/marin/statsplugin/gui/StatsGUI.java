@@ -62,7 +62,7 @@ public class StatsGUI extends JFrame {
             }
         });
 
-        trackerEnabledCheckbox.setSelected(StatsPluginSettings.getInstance().trackerEnabled);
+        updateGUI();
 
         trackerEnabledCheckbox.addActionListener(e -> {
             StatsPluginSettings settings = StatsPluginSettings.getInstance();
@@ -109,9 +109,14 @@ public class StatsGUI extends JFrame {
                     File file = chooser.getSelectedFile();
                     Files.copy(file.toPath(), STATS_SETTINGS_PATH, StandardCopyOption.REPLACE_EXISTING);
 
-                    StatsPluginSettings.load();
+                    boolean wasEnabled = StatsPluginSettings.getInstance().trackerEnabled;
 
-                    JOptionPane.showMessageDialog(null, "Imported settings.");
+                    StatsPluginSettings.load();
+                    updateGUI();
+
+                    boolean isEnabled = StatsPluginSettings.getInstance().trackerEnabled;
+
+                    JOptionPane.showMessageDialog(null, "Imported settings." + ((wasEnabled ^ isEnabled) ? "NOTE: Tracker is now " + (isEnabled ? "enabled." : "disabled.") : ""));
                     Julti.log(Level.INFO, "Imported & reloaded settings.");
                 }
             } catch (Exception e) {
@@ -209,6 +214,7 @@ public class StatsGUI extends JFrame {
 
         reloadSettingsButton.addActionListener(a -> {
             StatsPluginSettings.load();
+            updateGUI();
             Julti.log(Level.INFO, "Reloaded settings.");
             JOptionPane.showMessageDialog(null, "Reloaded settings.");
         });
@@ -226,6 +232,10 @@ public class StatsGUI extends JFrame {
             }
         });
 
+    }
+
+    public void updateGUI() {
+        trackerEnabledCheckbox.setSelected(StatsPluginSettings.getInstance().trackerEnabled);
     }
 
     public boolean isClosed() {
