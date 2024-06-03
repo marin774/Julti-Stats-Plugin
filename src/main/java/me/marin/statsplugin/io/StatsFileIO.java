@@ -1,14 +1,17 @@
 package me.marin.statsplugin.io;
 
+import me.marin.statsplugin.stats.Session;
 import me.marin.statsplugin.stats.StatsRecord;
+import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.util.ExceptionUtil;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.Stack;
 
 public class StatsFileIO {
 
@@ -40,36 +43,31 @@ public class StatsFileIO {
         } catch (IOException e) {
             Julti.log(Level.ERROR, "Error while writing stats to stats.csv:\n" + ExceptionUtil.toDetailedString(e));
         }
-        /*try (ReversedLinesFileReader reader = new ReversedLinesFileReader(path, StandardCharsets.UTF_8); RandomAccessFile writer = new RandomAccessFile(path.toFile(), "rw")) {
-            String lastLine = reader.readLine();
-            String[] parts = lastLine.split(", ");
-            String worldId = parts[parts.length - 1];
-            writer.seek(path.toFile().length());
-            if (statsRecord.worldId().equals(worldId)) {
-                // Delete last line (we're updating it)
-                long l = path.toFile().length() - ("\n" + lastLine).getBytes().length;
-                writer.setLength(l);
-                writer.seek(l);
-            }
-            writer.write(("\n" + statsRecord.toCSVLine()).getBytes());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }*/
     }
 
-    public List<StatsRecord> getAllStats() {
-        /*try (BufferedReader reader = Files.newReader(STATS_CSV_PATH.toFile(), StandardCharsets.UTF_8)) {
-            List<StatsCSVRecord> records = new ArrayList<>();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.isBlank() || line.startsWith("#")) continue;
-                records.add(StatsCSVRecord.fromCSVLine(line));
+    public Session getLatestSession() {
+        Session session = new Session();
+        Stack<StatsRecord> runs = new Stack<>();
+        try (ReversedLinesFileReader reader = new ReversedLinesFileReader(STATS_CSV_PATH.toFile(), StandardCharsets.UTF_8)) {
+            boolean sessionMarkerFound = false;
+            while (!sessionMarkerFound) {
+                String lastLine = reader.readLine();
+                if (lastLine == null) {
+                    break;
+                }
+                StatsRecord statsRecord = StatsRecord.fromCSVLine(lastLine);
+                runs.add(statsRecord);
+                if (statsRecord.sessionMarker().startsWith("$")) {
+                    sessionMarkerFound = true;
+                }
             }
-            return records;
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        }*/
-        throw new UnsupportedOperationException();
+            Julti.log(Level.ERROR, "Error while reading stats.csv for latest session:\n" + ExceptionUtil.toDetailedString(e));
+        }
+        while (!runs.isEmpty()) {
+            session.addRun(runs.pop(), false);
+        }
+        return session;
     }
 
     public Path getPath() {

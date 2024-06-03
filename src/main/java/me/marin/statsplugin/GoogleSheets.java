@@ -42,7 +42,6 @@ public class GoogleSheets {
     public boolean connect() {
         try {
             NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-            final String spreadsheetId = "1JdqRcKLziZPGG4IMCGBW_XBLsuVGgljARYZZ645vwg0";
 
             String sheetLink = StatsPluginSettings.getInstance().sheetLink;
             if (sheetLink == null) {
@@ -83,24 +82,25 @@ public class GoogleSheets {
      * @deprecated Temporary fix for a bug in older versions, will be removed in a later version
      */
     private void tempFix() {
-        try {
-            updateRawDataSheet();
-            Integer sheetId = rawDataSheet.getProperties().getSheetId();
+        StatsPluginUtil.runAsync("google-sheets", () -> {
+            try {
+                updateRawDataSheet();
+                Integer sheetId = rawDataSheet.getProperties().getSheetId();
 
-            List<Request> requests = new ArrayList<>();
-            requests.add(new Request().setFindReplace(
-                    new FindReplaceRequest()
-                            .setFind("Buried Treasure w/ TNT")
-                            .setMatchCase(true)
-                            .setReplacement("Buried Treasure w/ tnt")
-                            .setSheetId(sheetId)
-            ));
-            service.spreadsheets().batchUpdate(spreadsheetId, new BatchUpdateSpreadsheetRequest().setRequests(requests)).execute();
+                List<Request> requests = new ArrayList<>();
+                requests.add(new Request().setFindReplace(
+                        new FindReplaceRequest()
+                                .setFind("Buried Treasure w/ TNT")
+                                .setMatchCase(true)
+                                .setReplacement("Buried Treasure w/ tnt")
+                                .setSheetId(sheetId)
+                ));
+                service.spreadsheets().batchUpdate(spreadsheetId, new BatchUpdateSpreadsheetRequest().setRequests(requests)).execute();
 
-        } catch (IOException e) {
-            Julti.log(Level.ERROR, "Failed to update Google Sheets: " + ExceptionUtil.toDetailedString(e));
-        }
-
+            } catch (IOException e) {
+                Julti.log(Level.ERROR, "Failed to update Google Sheets: " + ExceptionUtil.toDetailedString(e));
+            }
+        });
     }
 
     public void insertRecord(StatsRecord record) {

@@ -3,15 +3,20 @@ package me.marin.statsplugin;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
+import org.apache.logging.log4j.Level;
+import xyz.duncanruns.julti.Julti;
 
 import java.io.File;
 import java.io.FileReader;
-import java.time.Instant;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static me.marin.statsplugin.io.RecordsFolderWatcher.DATETIME_FORMATTER;
 
 public class StatsPluginUtil {
 
@@ -36,24 +41,68 @@ public class StatsPluginUtil {
         }
     }
 
-    public static final DateTimeFormatter TIME_HOURS_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss.SSS"); // used in stats
-    public static final DateTimeFormatter TIME_MINUTES_FORMATTER = DateTimeFormatter.ofPattern("m:ss.S"); // used in OBS overlay
+    private static final ZoneId UTC_ID = TimeZone.getTimeZone("UTC").toZoneId();
+
+    public static final DateTimeFormatter TIME_HOURS_FORMATTER = new DateTimeFormatterBuilder()
+            .appendPattern("HH:mm:ss.SSS")
+            .toFormatter()
+            .withZone(UTC_ID); // used in stats
+
+    public static final DateTimeFormatter TIME_MINUTES_FORMATTER = new DateTimeFormatterBuilder()
+            .appendPattern("m:ss.S")
+            .toFormatter()
+            .withZone(UTC_ID); // used in OBS overlay
+
+
     public static String formatTime(Long millis) {
         return formatTime(millis, true);
     }
 
     public static String formatTime(Long millis, boolean hours) {
         if (millis == null) return "";
-        LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), TimeZone.getTimeZone("UTC").toZoneId());
+        LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), UTC_ID);
         if (hours) {
             return dateTime.format(TIME_HOURS_FORMATTER);
         } else {
             return dateTime.format(TIME_MINUTES_FORMATTER);
         }
     }
+    public static Long parseTime(String s) {
+        if (s == null || s.isBlank()) return null;
+
+        if (s.matches(".*\\.[0-9]{6}")) {
+            s = s.substring(0, s.lastIndexOf(".") + 3 + 1);
+        }
+
+        LocalTime localTime = LocalTime.parse(s, TIME_HOURS_FORMATTER);
+        long time = 0;
+
+        time += localTime.getHour() * 60 * 60 * 1000;
+        time += localTime.getMinute() * 60 * 1000;
+        time += localTime.getSecond() * 1000;
+        time += localTime.get(ChronoField.MILLI_OF_SECOND);
+
+        return time;
+    }
 
     public static void runAsync(String threadName, Runnable runnable) {
         new Thread(runnable, threadName).start();
+    }
+
+    public static Instant dateTimeToInstant(String dateTime) {
+        LocalDateTime ldt = LocalDateTime.parse(dateTime, DATETIME_FORMATTER);
+
+        return ldt.atZone(DATETIME_FORMATTER.getZone()).toInstant();
+    }
+
+    public static long calculateDifferenceInMillis(String dateTimeString1, String dateTimeString2) {
+        LocalDateTime dateTime1 = LocalDateTime.parse(dateTimeString1, DATETIME_FORMATTER);
+        LocalDateTime dateTime2 = LocalDateTime.parse(dateTimeString2, DATETIME_FORMATTER);
+
+        Instant instant1 = dateTime1.atZone(ZoneId.systemDefault()).toInstant();
+        Instant instant2 = dateTime2.atZone(ZoneId.systemDefault()).toInstant();
+
+        return Math.abs(Duration.between(instant1, instant2).toMillis());
     }
 
 }

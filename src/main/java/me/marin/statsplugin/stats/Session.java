@@ -17,8 +17,21 @@ public class Session {
 
     private final List<StatsRecord> records = new ArrayList<>();
 
-    public void addRun(StatsRecord record) {
-        Julti.log(Level.DEBUG, "Added this run, updating overlay: " + record);
+    public static Session merge(Session older, Session newer) {
+        Session session = new Session();
+        for (StatsRecord record : older.records) {
+            session.addRun(record, false);
+        }
+        for (StatsRecord record : newer.records) {
+            session.addRun(record, false);
+        }
+        return session;
+    }
+
+    public void addRun(StatsRecord record, boolean log) {
+        if (log) {
+            Julti.log(Level.DEBUG, "Added this run, updating overlay: " + record);
+        }
         records.add(record);
         updateOverlay();
     }
@@ -60,10 +73,10 @@ public class Session {
         long enters = calculateEnters();
         for (StatsRecord record : records) {
             totalTimePlayedMillis += record.wallTimeSincePrev();
-            totalTimePlayedMillis += record.RTA();
             if (record.nether() != null) {
-                // Don't count nether time
-                totalTimePlayedMillis -= record.RTA() - record.nether();
+                totalTimePlayedMillis += record.nether();
+            } else {
+                totalTimePlayedMillis += record.RTA();
             }
             totalTimePlayedMillis += record.RTASincePrev();
         }
@@ -71,8 +84,13 @@ public class Session {
         return 60 / (totalTimePlayedMinutes / enters);
     }
 
+    public StatsRecord getLatestRecord() {
+        if (records.size() == 0) return null;
+        return records.get(records.size() - 1);
+    }
 
-
-
+    public boolean isEmpty() {
+        return records.isEmpty();
+    }
 
 }

@@ -5,6 +5,7 @@ import me.marin.statsplugin.gui.OBSOverlayGUI;
 import me.marin.statsplugin.gui.StatsGUI;
 import me.marin.statsplugin.io.OldRecordBopperRunnable;
 import me.marin.statsplugin.io.RecordsFolderWatcher;
+import me.marin.statsplugin.io.StatsFileIO;
 import me.marin.statsplugin.io.StatsPluginSettings;
 import me.marin.statsplugin.stats.Session;
 import org.apache.logging.log4j.Level;
@@ -20,6 +21,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.Instant;
 
 public class StatsPlugin implements PluginInitializer {
 
@@ -31,7 +34,7 @@ public class StatsPlugin implements PluginInitializer {
     public static final Path OBS_OVERLAY_TEMPLATE_PATH = STATS_FOLDER_PATH.resolve("obs-overlay-template");
     public static final Path OBS_OVERLAY_PATH = STATS_FOLDER_PATH.resolve("obs-overlay.txt");
 
-    public static final Session CURRENT_SESSION = new Session();
+    public static Session CURRENT_SESSION = new Session();
 
     public static StatsGUI statsGUI;
     public static GoogleSheets googleSheets;
@@ -53,13 +56,29 @@ public class StatsPlugin implements PluginInitializer {
             STATS_FOLDER_PATH.toFile().mkdirs();
 
             OBSOverlayGUI.createDefaultFile();
+
+            Session previousSession = StatsFileIO.getInstance().getLatestSession();
+            if (!previousSession.isEmpty()) {
+                String dateTime = previousSession.getLatestRecord().dateTime();
+
+                long timeSince = Math.abs(Duration.between(Instant.now(), StatsPluginUtil.dateTimeToInstant(dateTime)).toMillis());
+                Julti.log(Level.DEBUG, "Last record in previous session: " + dateTime + "(" + timeSince + "ms ago)");
+
+                if (timeSince < 1000 * 60 * 60 * 3) {
+                    // less than 3 hours since previous session, merge
+                    CURRENT_SESSION = previousSession;
+                    Julti.log(Level.INFO, "Continuing calculating stats from previous session!");
+                }
+            }
+
             CURRENT_SESSION.updateOverlay();
 
             StatsPluginSettings.load();
             StatsPlugin.reloadGoogleSheets();
-            new Thread(new RecordsFolderWatcher(Paths.get(StatsPluginSettings.getInstance().recordsPath)), "records-folder-watcher").start();
+
+            StatsPluginUtil.runAsync("records-folder-watcher", new RecordsFolderWatcher(Paths.get(StatsPluginSettings.getInstance().recordsPath)));
             if (StatsPluginSettings.getInstance().deleteOldRecords) {
-                new Thread(new OldRecordBopperRunnable(), "old-record-bopper").start();
+                StatsPluginUtil.runAsync("old-record-bopper", new OldRecordBopperRunnable());
             }
         });
     }

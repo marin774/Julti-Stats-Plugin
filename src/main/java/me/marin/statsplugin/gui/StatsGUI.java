@@ -6,6 +6,7 @@ import me.marin.statsplugin.StatsPluginUtil;
 import me.marin.statsplugin.io.OldRecordBopperRunnable;
 import me.marin.statsplugin.io.StatsFileIO;
 import me.marin.statsplugin.io.StatsPluginSettings;
+import me.marin.statsplugin.stats.Session;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.gui.JultiGUI;
@@ -44,6 +45,7 @@ public class StatsGUI extends JFrame {
     private JButton reloadSettingsButton;
     private JButton clearSpeedrunIGTRecordsButton;
     private JButton OBSOverlayButton;
+    private JButton startANewSessionButton;
 
     private OBSOverlayGUI obsOverlayGUI;
 
@@ -232,6 +234,12 @@ public class StatsGUI extends JFrame {
             }
         });
 
+        startANewSessionButton.addActionListener(a -> {
+            CURRENT_SESSION = new Session();
+            Julti.log(Level.INFO, "Started a new session!");
+            JOptionPane.showMessageDialog(null, "New session will begin with your next run.");
+        });
+
     }
 
     public void updateGUI() {
@@ -345,21 +353,24 @@ public class StatsGUI extends JFrame {
         label3.setText("Utility:");
         panel4.add(label3, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel5 = new JPanel();
-        panel5.setLayout(new GridLayoutManager(2, 2, new Insets(25, 0, 5, 0), -1, -1));
+        panel5.setLayout(new GridLayoutManager(2, 3, new Insets(25, 0, 5, 0), -1, -1));
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.fill = GridBagConstraints.BOTH;
         panel1.add(panel5, gbc);
-        reconnectToGoogleSheetsButton = new JButton();
-        reconnectToGoogleSheetsButton.setText("Reconnect to Google Sheets");
-        panel5.add(reconnectToGoogleSheetsButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        reloadSettingsButton = new JButton();
-        reloadSettingsButton.setText("Reload settings");
-        panel5.add(reloadSettingsButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label4 = new JLabel();
         label4.setText("Debug:");
         panel5.add(label4, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        reloadSettingsButton = new JButton();
+        reloadSettingsButton.setText("Reload settings");
+        panel5.add(reloadSettingsButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        reconnectToGoogleSheetsButton = new JButton();
+        reconnectToGoogleSheetsButton.setText("Reconnect to Google Sheets");
+        panel5.add(reconnectToGoogleSheetsButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        startANewSessionButton = new JButton();
+        startANewSessionButton.setText("Start a new session");
+        panel5.add(startANewSessionButton, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JSeparator separator1 = new JSeparator();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;

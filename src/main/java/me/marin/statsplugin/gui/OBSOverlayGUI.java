@@ -212,5 +212,4 @@ public class OBSOverlayGUI extends JFrame {
     public JComponent $$$getRootComponent$$$() {
         return mainPanel;
     }
-
 }
