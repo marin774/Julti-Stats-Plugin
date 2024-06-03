@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class CurrentSession {
+public class Session {
 
     private final List<StatsRecord> records = new ArrayList<>();
 

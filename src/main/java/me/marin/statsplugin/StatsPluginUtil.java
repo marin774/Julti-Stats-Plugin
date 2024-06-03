@@ -52,4 +52,8 @@ public class StatsPluginUtil {
         }
     }
 
+    public static void runAsync(String threadName, Runnable runnable) {
+        new Thread(runnable, threadName).start();
+    }
+
 }

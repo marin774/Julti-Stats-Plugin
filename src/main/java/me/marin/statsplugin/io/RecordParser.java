@@ -266,7 +266,7 @@ public class RecordParser {
             if (isFullShipwreck) {
                 ironSource = "Full Shipwreck";
             } else if (explodedTNT) {
-                ironSource = "Buried Treasure w/ TNT";
+                ironSource = "Buried Treasure w/ tnt";
             } else if (buriedTreasure) {
                 ironSource = "Buried Treasure";
             } else if (woodBeforeIron) {

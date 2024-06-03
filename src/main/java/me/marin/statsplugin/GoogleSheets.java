@@ -61,6 +61,7 @@ public class GoogleSheets {
                     .build();
 
             Julti.log(Level.INFO, "Connected to Google Sheets!");
+            StatsPluginUtil.runAsync("google-sheets", this::tempFix);
             return true;
         } catch (Exception e) {
             Julti.log(Level.ERROR, "Failed to connect to Google Sheets: " + ExceptionUtil.toDetailedString(e));
@@ -70,41 +71,73 @@ public class GoogleSheets {
 
     private Sheet rawDataSheet;
 
-    public void insertRecord(StatsRecord record) {
+    private void updateRawDataSheet() throws IOException {
+        if (rawDataSheet == null) {
+            this.rawDataSheet = service.spreadsheets().getByDataFilter(spreadsheetId, new GetSpreadsheetByDataFilterRequest().setIncludeGridData(false).setDataFilters(
+                    List.of(new DataFilter().setA1Range("Raw Data"))
+            )).execute().getSheets().get(0);
+        }
+    }
+
+    /**
+     * @deprecated Temporary fix for a bug in older versions, will be removed in a later version
+     */
+    private void tempFix() {
         try {
-            if (rawDataSheet == null) {
-                this.rawDataSheet = service.spreadsheets().getByDataFilter(spreadsheetId, new GetSpreadsheetByDataFilterRequest().setIncludeGridData(false).setDataFilters(
-                        List.of(new DataFilter().setA1Range("Raw Data"))
-                )).execute().getSheets().get(0);
-            }
+            updateRawDataSheet();
             Integer sheetId = rawDataSheet.getProperties().getSheetId();
 
             List<Request> requests = new ArrayList<>();
-            requests.add(new Request().setInsertDimension(
-                    new InsertDimensionRequest()
-                            .setInheritFromBefore(false) /* inherit from the row after! */
-                            .setRange(
-                                    new DimensionRange()
-                                            .setDimension("ROWS")
-                                            .setSheetId(sheetId)
-                                            .setStartIndex(1)
-                                            .setEndIndex(2)
-                            )
-                    )
-            );
-            requests.add(new Request().setUpdateCells(
-                    new UpdateCellsRequest()
-                            .setRows(Collections.singletonList(record.getGoogleSheetsRowData()))
-                            .setRange(new GridRange().setSheetId(sheetId).setStartRowIndex(1).setEndRowIndex(2).setStartColumnIndex(0))
-                            .setFields("userEnteredValue")
-                    )
-            );
-
+            requests.add(new Request().setFindReplace(
+                    new FindReplaceRequest()
+                            .setFind("Buried Treasure w/ TNT")
+                            .setMatchCase(true)
+                            .setReplacement("Buried Treasure w/ tnt")
+                            .setSheetId(sheetId)
+            ));
             service.spreadsheets().batchUpdate(spreadsheetId, new BatchUpdateSpreadsheetRequest().setRequests(requests)).execute();
 
-        } catch (Exception e) {
-            Julti.log(Level.ERROR, "Failed to connect to Google Sheets: " + ExceptionUtil.toDetailedString(e));
+        } catch (IOException e) {
+            Julti.log(Level.ERROR, "Failed to update Google Sheets: " + ExceptionUtil.toDetailedString(e));
         }
+
+    }
+
+    public void insertRecord(StatsRecord record) {
+        StatsPluginUtil.runAsync("google-sheets", () -> {
+            try {
+                updateRawDataSheet();
+                Integer sheetId = rawDataSheet.getProperties().getSheetId();
+
+                List<Request> requests = new ArrayList<>();
+                requests.add(new Request().setInsertDimension(
+                                new InsertDimensionRequest()
+                                        .setInheritFromBefore(false) /* inherit from the row after! */
+                                        .setRange(
+                                                new DimensionRange()
+                                                        .setDimension("ROWS")
+                                                        .setSheetId(sheetId)
+                                                        .setStartIndex(1)
+                                                        .setEndIndex(2)
+                                        )
+                        )
+                );
+
+                requests.add(new Request().setUpdateCells(
+                                new UpdateCellsRequest()
+                                        .setRows(Collections.singletonList(record.getGoogleSheetsRowData()))
+                                        .setRange(new GridRange().setSheetId(sheetId).setStartRowIndex(1).setEndRowIndex(2).setStartColumnIndex(0))
+                                        .setFields("userEnteredValue")
+                        )
+                );
+
+                service.spreadsheets().batchUpdate(spreadsheetId, new BatchUpdateSpreadsheetRequest().setRequests(requests)).execute();
+
+            } catch (Exception e) {
+                Julti.log(Level.ERROR, "Failed to update Google Sheets: " + ExceptionUtil.toDetailedString(e));
+            }
+        });
+
     }
 
     private GoogleCredentials authorize() throws IOException {
