@@ -3,8 +3,6 @@ package me.marin.statsplugin;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
-import org.apache.logging.log4j.Level;
-import xyz.duncanruns.julti.Julti;
 
 import java.io.File;
 import java.io.FileReader;
