@@ -162,7 +162,7 @@
               </component>
             </children>
           </grid>
-          <grid id="b13b0" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="b13b0" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="25" left="0" bottom="5" right="0"/>
             <constraints>
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -171,12 +171,12 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="e2552" class="javax.swing.JButton" binding="reconnectToGoogleSheetsButton" default-binding="true">
+              <component id="248ea" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Reconnect to Google Sheets"/>
+                  <text value="Debug:"/>
                 </properties>
               </component>
               <component id="4a499" class="javax.swing.JButton" binding="reloadSettingsButton" default-binding="true">
@@ -187,12 +187,20 @@
                   <text value="Reload settings"/>
                 </properties>
               </component>
-              <component id="248ea" class="javax.swing.JLabel">
+              <component id="e2552" class="javax.swing.JButton" binding="reconnectToGoogleSheetsButton" default-binding="true">
                 <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Debug:"/>
+                  <text value="Reconnect to Google Sheets"/>
+                </properties>
+              </component>
+              <component id="45005" class="javax.swing.JButton" binding="startANewSessionButton">
+                <constraints>
+                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Start a new session"/>
                 </properties>
               </component>
             </children>

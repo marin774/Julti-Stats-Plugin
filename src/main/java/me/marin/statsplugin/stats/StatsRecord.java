@@ -1,6 +1,7 @@
 package me.marin.statsplugin.stats;
 
 import com.google.api.services.sheets.v4.model.*;
+import me.marin.statsplugin.StatsPluginUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +45,8 @@ public record StatsRecord(String dateTime,
         cellData.add(new CellData().setUserEnteredValue(new ExtendedValue().setStringValue(formatForSheets(RTT))));
         cellData.add(new CellData().setUserEnteredValue(new ExtendedValue().setStringValue(formatForSheets(IGT))));
         cellData.add(new CellData()); // gold dropped, not supported
-        cellData.add(formatNumber(blazeRods, false));
-        cellData.add(formatNumber(blazesKilled, false));
+        cellData.add(formatNumber(blazeRods, true));
+        cellData.add(formatNumber(blazesKilled, true));
         cellData.add(new CellData()); // empty
         cellData.add(new CellData()); // empty
         cellData.add(new CellData()); // empty
@@ -53,8 +54,8 @@ public record StatsRecord(String dateTime,
         cellData.add(new CellData()); // empty
         cellData.add(new CellData()); // empty
         cellData.add(new CellData().setUserEnteredValue(new ExtendedValue().setStringValue(formatForSheets(iron))));
-        cellData.add(formatNumber(wallResetsSincePrev, true));
-        cellData.add(formatNumber(playedSincePrev, true));
+        cellData.add(formatNumber(wallResetsSincePrev, false));
+        cellData.add(formatNumber(playedSincePrev, false));
         cellData.add(new CellData().setUserEnteredValue(new ExtendedValue().setStringValue(formatForSheets(RTASincePrev))));
         cellData.add(new CellData().setUserEnteredValue(new ExtendedValue().setStringValue(formatForSheets(breakRTASincePrev))));
         cellData.add(new CellData().setUserEnteredValue(new ExtendedValue().setStringValue(formatForSheets(wallTimeSincePrev))));
@@ -70,18 +71,53 @@ public record StatsRecord(String dateTime,
         return "*" + formatTime(time);
     }
 
-    private static CellData formatNumber(String number, boolean zeroIfNull) {
+    private static CellData formatNumber(String number, boolean emptyIfZero) {
         CellData cell = new CellData();
-        if (number == null && zeroIfNull) {
-            number = "0";
+        if (number != null && number.equals("0") && emptyIfZero) {
+            number = null;
         }
         if (number != null) cell.setUserEnteredValue(new ExtendedValue().setNumberValue((double) Long.parseLong(number)));
         return cell;
     }
 
-    /*public static StatsCSVRecord fromCSVLine(String line) {
+    public static StatsRecord fromCSVLine(String line) {
         String[] parts = line.split(",");
-        return new StatsCSVRecord(parts[0], parts[1], parts[2], parts[4], parts[5], parts[6], parts[7], parts[8], parts[9], parts[10], parts[11], parts[12], parts[13], parts[14], parts[15], parts[17], parts[18], parts[25], parts[26], parts[27], parts[28], parts[29], parts[30], parts[31], parts[32]);
-    }*/
+        return new StatsRecord(
+                parts[0],
+                parts[1],
+                parts[2],
+                parts[4],
+                StatsPluginUtil.parseTime(parts[5]),
+                StatsPluginUtil.parseTime(parts[6]),
+                StatsPluginUtil.parseTime(parts[7]),
+                StatsPluginUtil.parseTime(parts[8]),
+                StatsPluginUtil.parseTime(parts[9]),
+                StatsPluginUtil.parseTime(parts[10]),
+                StatsPluginUtil.parseTime(parts[11]),
+                StatsPluginUtil.parseTime(parts[12]),
+                StatsPluginUtil.parseTime(parts[13]),
+                StatsPluginUtil.parseTime(parts[14]),
+                StatsPluginUtil.parseTime(parts[15]),
+                parts[17],
+                parts[18],
+                StatsPluginUtil.parseTime(parts[25]),
+                parts[26],
+                parts[27],
+                StatsPluginUtil.parseTime(parts[28]),
+                StatsPluginUtil.parseTime(parts[29]),
+                StatsPluginUtil.parseTime(parts[30]),
+                parts[31],
+                parts[32]
+        );
+    }
+
+    private static Long parseLong(String s) {
+        if (s.isBlank()) return null;
+        try {
+            return Long.parseLong(s);
+        } catch (NumberFormatException ignored) {
+            return null;
+        }
+    }
 
 }

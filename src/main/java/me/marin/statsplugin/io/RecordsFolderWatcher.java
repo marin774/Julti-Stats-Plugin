@@ -12,16 +12,21 @@ import xyz.duncanruns.julti.management.ActiveWindowManager;
 import java.io.File;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class RecordsFolderWatcher extends FileWatcher {
 
-    private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("M/d/yyyy HH:mm:ss");
+    // https://stackoverflow.com/questions/69389964/how-to-convert-a-temporalaccessor-a-milliseconds-timestamp-using-instant
+    public static final DateTimeFormatter DATETIME_FORMATTER = new DateTimeFormatterBuilder()
+            .appendPattern("M/d/yyyy HH:mm:ss")
+            .toFormatter()
+            .withZone(ZoneId.systemDefault());
+
     private static final String SESSION_MARKER = "$J" + StatsPlugin.VERSION;
 
     private int wallResetsSincePrev = 0;
@@ -33,8 +38,6 @@ public class RecordsFolderWatcher extends FileWatcher {
     private String RTADistribution = "";
 
     private long lastActionMillis = 0;
-
-    private boolean isFirstRun = true;
 
     // Completed runs get updated on completion and on reset, which means they would get tracked twice - this prevents that.
     private final List<String> completedRunsRecordIds = new ArrayList<>();
@@ -102,7 +105,7 @@ public class RecordsFolderWatcher extends FileWatcher {
 
         Julti.log(Level.DEBUG, "Done split: " + recordParser.hasObtainedIron() + ", " + recordParser.hasObtainedWood() + ", " + recordParser.hasObtainedWood() + ", " + recordParser.getTimelinesMap());
 
-        String date = LocalDateTime.ofInstant(Instant.ofEpochMilli(recordParser.getDate()), ZoneId.systemDefault()).format(DATETIME_FORMATTER);
+        String date = DATETIME_FORMATTER.format(Instant.ofEpochMilli(recordParser.getDate()));
         Map<String, Long> timelines = recordParser.getTimelinesMap();
 
         StatsRecord csvRecord = new StatsRecord(
@@ -129,7 +132,7 @@ public class RecordsFolderWatcher extends FileWatcher {
                 Math.max(0, RTASincePrev),
                 breakRTASincePrev,
                 wallTimeSincePrev,
-                isFirstRun ? SESSION_MARKER : "",
+                StatsPlugin.CURRENT_SESSION.isEmpty() ? SESSION_MARKER : "",
                 RTADistribution
         );
 
@@ -137,13 +140,12 @@ public class RecordsFolderWatcher extends FileWatcher {
             completedRunsRecordIds.add(file.getName());
         }
 
-        StatsPlugin.CURRENT_SESSION.addRun(csvRecord);
+        StatsPlugin.CURRENT_SESSION.addRun(csvRecord, true);
         StatsFileIO.getInstance().writeStats(csvRecord);
         if (StatsPluginSettings.getInstance().useSheets && StatsPlugin.googleSheets.isConnected()) {
             StatsPlugin.googleSheets.insertRecord(csvRecord);
         }
 
-        isFirstRun = false;
         wallResetsSincePrev = 0;
         splitlessResets = 0;
         RTASincePrev = 0;
