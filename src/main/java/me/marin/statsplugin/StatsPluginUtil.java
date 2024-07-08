@@ -3,6 +3,7 @@ package me.marin.statsplugin;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileReader;
@@ -66,9 +67,9 @@ public class StatsPluginUtil {
         }
     }
     public static Long parseTime(String s) {
-        if (s == null || s.isBlank()) return null;
+        if (s == null || StringUtils.isBlank(s)) return null;
 
-        if (s.matches(".*\\.[0-9]{6}")) {
+        if (s.matches(".*\\.[0-9]{6}")) { // old tracker format
             s = s.substring(0, s.lastIndexOf(".") + 3 + 1);
         }
 
@@ -88,19 +89,19 @@ public class StatsPluginUtil {
     }
 
     public static Instant dateTimeToInstant(String dateTime) {
-        LocalDateTime ldt = LocalDateTime.parse(dateTime, DATETIME_FORMATTER);
+        LocalDateTime ldt;
+        if (dateTime.matches("\\d*-\\d*-\\d* .*\\.[0-9]{6}")) { // old tracker format
+            DateTimeFormatter oldFormatter = new DateTimeFormatterBuilder()
+                    .appendPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
+                    .toFormatter()
+                    .withZone(ZoneId.systemDefault());
+            ldt = LocalDateTime.parse(dateTime, oldFormatter);
+        } else {
+            ldt = LocalDateTime.parse(dateTime, DATETIME_FORMATTER);
+        }
 
         return ldt.atZone(DATETIME_FORMATTER.getZone()).toInstant();
     }
 
-    public static long calculateDifferenceInMillis(String dateTimeString1, String dateTimeString2) {
-        LocalDateTime dateTime1 = LocalDateTime.parse(dateTimeString1, DATETIME_FORMATTER);
-        LocalDateTime dateTime2 = LocalDateTime.parse(dateTimeString2, DATETIME_FORMATTER);
-
-        Instant instant1 = dateTime1.atZone(ZoneId.systemDefault()).toInstant();
-        Instant instant2 = dateTime2.atZone(ZoneId.systemDefault()).toInstant();
-
-        return Math.abs(Duration.between(instant1, instant2).toMillis());
-    }
 
 }

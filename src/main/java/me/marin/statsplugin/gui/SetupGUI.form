@@ -1,0 +1,656 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="me.marin.statsplugin.gui.SetupGUI">
+  <grid id="9625a" binding="mainPanel" layout-manager="BorderLayout" hgap="0" vgap="5">
+    <constraints>
+      <xy x="20" y="20" width="610" height="405"/>
+    </constraints>
+    <properties>
+      <preferredSize width="610" height="355"/>
+    </properties>
+    <border type="empty">
+      <size top="5" left="5" bottom="5" right="5"/>
+    </border>
+    <children>
+      <grid id="2aa66" binding="navigationBar" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="South"/>
+        <properties>
+          <visible value="true"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <grid id="3a29b" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+            <constraints border-constraint="West"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="96420" class="javax.swing.JButton" binding="exitButton" default-binding="true">
+                <constraints/>
+                <properties>
+                  <text value="Exit"/>
+                  <visible value="false"/>
+                </properties>
+              </component>
+              <component id="373d0" class="javax.swing.JButton" binding="backButton">
+                <constraints/>
+                <properties>
+                  <enabled value="false"/>
+                  <hideActionText value="false"/>
+                  <horizontalAlignment value="0"/>
+                  <text value="Back"/>
+                </properties>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="false"/>
+                </clientProperties>
+              </component>
+            </children>
+          </grid>
+          <grid id="d23aa" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+            <constraints border-constraint="East"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="2fdc8" class="javax.swing.JButton" binding="nextButton">
+                <constraints/>
+                <properties>
+                  <enabled value="false"/>
+                  <text value="Next"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+        </children>
+      </grid>
+      <grid id="27dc6" binding="cardContainer" layout-manager="CardLayout" hgap="0" vgap="0" show="787ef">
+        <constraints border-constraint="Center"/>
+        <properties>
+          <maximumSize width="550" height="300"/>
+          <minimumSize width="600" height="300"/>
+          <preferredSize width="500" height="300"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <grid id="4face" binding="card1" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints>
+              <card name="Card1"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <grid id="974ce" layout-manager="GridBagLayout">
+                <constraints border-constraint="Center"/>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <grid id="ece66" layout-manager="BorderLayout" hgap="0" vgap="10">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <grid id="9ac63" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                        <margin top="0" left="0" bottom="0" right="0"/>
+                        <constraints border-constraint="North"/>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="8c237" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <enabled value="true"/>
+                              <font size="16"/>
+                              <text value="&lt;html&gt;Do you want to track stats online through Google Sheets?&lt;/html&gt;" noi18n="true"/>
+                              <visible value="true"/>
+                            </properties>
+                          </component>
+                          <grid id="14ef" layout-manager="BorderLayout" hgap="0" vgap="0">
+                            <constraints>
+                              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="54052" class="javax.swing.JEditorPane" binding="card1_jep">
+                                <constraints border-constraint="North"/>
+                                <properties>
+                                  <contentType value="text/html"/>
+                                  <editable value="false"/>
+                                  <enabled value="true"/>
+                                  <focusable value="false"/>
+                                  <font/>
+                                  <opaque value="false"/>
+                                  <text value="&lt;html&gt;&#10;&lt;div&gt;- Stats are uploaded to a Google Sheet, which are then available on &lt;a href=&quot;https://reset-analytics-dev.vercel.app/&quot;&gt;Specnr's Reset Analytics Website&lt;/a&gt;. You will be able to see detailed stats on the website which you can easily share with others.&lt;/div&gt;&#10;&lt;div&gt;- Note: If you already use Google Sheets with the &quot;old&quot; tracker, still select &lt;i&gt;Yes&lt;/i&gt;.&lt;/div&gt;&#10;&lt;br&gt;&#10;&lt;div&gt;&lt;b&gt;If you only want the OBS overlay and you don't care about sharing your stats, select &lt;i&gt;No&lt;/i&gt;.&lt;br&gt;NOTE: You currently won't be able to link a Google Sheet if you select No.&lt;/b&gt;&lt;/div&gt;&#10;&lt;/html&gt;&#10;" noi18n="true"/>
+                                  <verifyInputWhenFocusTarget value="true"/>
+                                </properties>
+                                <clientProperties>
+                                  <JEditorPane.honorDisplayProperties class="java.lang.Boolean" value="true"/>
+                                </clientProperties>
+                              </component>
+                            </children>
+                          </grid>
+                        </children>
+                      </grid>
+                      <grid id="a7f52" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="1">
+                        <constraints border-constraint="Center"/>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="23d91" class="javax.swing.JButton" binding="card1_yesButton">
+                            <constraints/>
+                            <properties>
+                              <text value="Yes"/>
+                            </properties>
+                          </component>
+                          <component id="cf19e" class="javax.swing.JButton" binding="card1_noButton">
+                            <constraints/>
+                            <properties>
+                              <text value="No"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </grid>
+                    </children>
+                  </grid>
+                </children>
+              </grid>
+            </children>
+          </grid>
+          <grid id="42621" binding="card2" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints>
+              <card name="Card2"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <grid id="8dc31" layout-manager="GridBagLayout">
+                <constraints border-constraint="Center"/>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <grid id="8c985" layout-manager="BorderLayout" hgap="0" vgap="10">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <grid id="f3aa4" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="0">
+                        <margin top="0" left="0" bottom="0" right="0"/>
+                        <constraints border-constraint="North"/>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="2bb22" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <enabled value="true"/>
+                              <font size="16"/>
+                              <text value="&lt;html&gt;Have you used the old tracker before?&lt;/html&gt;" noi18n="true"/>
+                              <visible value="true"/>
+                            </properties>
+                          </component>
+                          <grid id="2b8fc" layout-manager="BorderLayout" hgap="0" vgap="0">
+                            <constraints>
+                              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="e484" class="javax.swing.JEditorPane" binding="card2_jep">
+                                <constraints border-constraint="North"/>
+                                <properties>
+                                  <contentType value="text/html"/>
+                                  <editable value="false"/>
+                                  <enabled value="true"/>
+                                  <focusable value="false"/>
+                                  <font/>
+                                  <opaque value="false"/>
+                                  <text value="&lt;html&gt;&#10;&lt;div&gt;- Note: This refers to the widely used &lt;a href=&quot;https://github.com/Specnr/ResetTracker&quot;&gt;tracker developed by Specnr&lt;/a&gt; and further developed by &lt;a href=&quot;https://github.com/pncakespoon1/ResetTracker/&quot;&gt;pncakespoon&lt;/a&gt;.&lt;/div&gt;&#10;&lt;div&gt;- &lt;b&gt;If you don't have a sheet (or if you want a new one), select &lt;i&gt;No&lt;/i&gt;.&lt;/b&gt;&lt;/div&gt;&#10;&lt;/html&gt;&#10;" noi18n="true"/>
+                                  <verifyInputWhenFocusTarget value="true"/>
+                                </properties>
+                                <clientProperties>
+                                  <JEditorPane.honorDisplayProperties class="java.lang.Boolean" value="true"/>
+                                </clientProperties>
+                              </component>
+                            </children>
+                          </grid>
+                        </children>
+                      </grid>
+                      <grid id="e7548" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="1">
+                        <constraints border-constraint="Center"/>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="ae222" class="javax.swing.JButton" binding="card2_yesButton">
+                            <constraints/>
+                            <properties>
+                              <text value="Yes"/>
+                            </properties>
+                          </component>
+                          <component id="23968" class="javax.swing.JButton" binding="card2_noButton">
+                            <constraints/>
+                            <properties>
+                              <text value="No"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </grid>
+                    </children>
+                  </grid>
+                </children>
+              </grid>
+            </children>
+          </grid>
+          <grid id="787ef" binding="card3" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints>
+              <card name="Card3"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <grid id="10b00" layout-manager="GridBagLayout">
+                <constraints border-constraint="Center"/>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <grid id="37f2f" layout-manager="BorderLayout" hgap="0" vgap="10">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <grid id="1150a" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="0">
+                        <margin top="0" left="0" bottom="0" right="0"/>
+                        <constraints border-constraint="North"/>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="3bb25" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <enabled value="true"/>
+                              <font size="16"/>
+                              <text value="&lt;html&gt;Import existing Google Sheet&lt;/html&gt;" noi18n="true"/>
+                              <visible value="true"/>
+                            </properties>
+                          </component>
+                          <grid id="a8b2" layout-manager="BorderLayout" hgap="0" vgap="0">
+                            <constraints>
+                              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="dd281" class="javax.swing.JEditorPane">
+                                <constraints border-constraint="North"/>
+                                <properties>
+                                  <contentType value="text/html"/>
+                                  <editable value="false"/>
+                                  <enabled value="true"/>
+                                  <focusable value="false"/>
+                                  <font size="11"/>
+                                  <opaque value="false"/>
+                                  <text value="&lt;html&gt;&#10;&lt;div&gt;- Click on import button, then find the old tracker, and select the credentials.json file.&lt;/div&gt;&#10;&lt;div&gt;- Paste the Google Sheets URL below (you can find it in settings.json in the old tracker files)&lt;/div&gt;&#10;&lt;div&gt;- Click &quot;Test&quot; so you can be sure it works.&lt;/div&gt;&#10;&lt;/html&gt;&#10;" noi18n="true"/>
+                                  <verifyInputWhenFocusTarget value="true"/>
+                                </properties>
+                                <clientProperties>
+                                  <JEditorPane.honorDisplayProperties class="java.lang.Boolean" value="true"/>
+                                </clientProperties>
+                              </component>
+                            </children>
+                          </grid>
+                        </children>
+                      </grid>
+                      <grid id="eb93a" layout-manager="FormLayout">
+                        <rowspec value="center:max(d;4px):noGrow"/>
+                        <rowspec value="top:4dlu:noGrow"/>
+                        <rowspec value="center:max(d;4px):noGrow"/>
+                        <colspec value="fill:max(d;4px):noGrow"/>
+                        <constraints border-constraint="Center"/>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <grid id="6d2d8" layout-manager="BorderLayout" hgap="10" vgap="0">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
+                              <forms defaultalign-vert="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="a8237" class="javax.swing.JButton" binding="card3_importButton">
+                                <constraints border-constraint="West"/>
+                                <properties>
+                                  <text value="Import credentials.json"/>
+                                </properties>
+                              </component>
+                              <component id="43145" class="javax.swing.JLabel" binding="card3_importLabel">
+                                <constraints border-constraint="Center"/>
+                                <properties>
+                                  <text value="&lt;html&gt;Waiting for import...&lt;/html&gt;"/>
+                                </properties>
+                              </component>
+                            </children>
+                          </grid>
+                          <grid id="e1b9b" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+                            <constraints>
+                              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
+                              <forms defaultalign-vert="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <grid id="8dd40" layout-manager="BorderLayout" hgap="0" vgap="5">
+                                <constraints/>
+                                <properties>
+                                  <enabled value="true"/>
+                                </properties>
+                                <border type="none"/>
+                                <children>
+                                  <component id="4d2a6" class="javax.swing.JLabel">
+                                    <constraints border-constraint="North"/>
+                                    <properties>
+                                      <text value="Google Sheets URL:"/>
+                                    </properties>
+                                  </component>
+                                  <grid id="d0a54" layout-manager="BorderLayout" hgap="10" vgap="0">
+                                    <constraints border-constraint="Center"/>
+                                    <properties/>
+                                    <border type="none"/>
+                                    <children>
+                                      <component id="715bc" class="javax.swing.JTextField" binding="card3_sheetURLField">
+                                        <constraints border-constraint="Center"/>
+                                        <properties>
+                                          <enabled value="false"/>
+                                          <preferredSize width="500" height="30"/>
+                                        </properties>
+                                      </component>
+                                      <component id="e6786" class="javax.swing.JButton" binding="card3_testButton">
+                                        <constraints border-constraint="East"/>
+                                        <properties>
+                                          <enabled value="false"/>
+                                          <text value="Test"/>
+                                        </properties>
+                                      </component>
+                                    </children>
+                                  </grid>
+                                </children>
+                              </grid>
+                            </children>
+                          </grid>
+                        </children>
+                      </grid>
+                    </children>
+                  </grid>
+                </children>
+              </grid>
+            </children>
+          </grid>
+          <grid id="e08b" binding="card4" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints>
+              <card name="Card4"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <grid id="2e285" layout-manager="GridBagLayout">
+                <constraints border-constraint="Center"/>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <grid id="e9dc" layout-manager="BorderLayout" hgap="0" vgap="10">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <grid id="9c534" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="0">
+                        <margin top="0" left="0" bottom="0" right="0"/>
+                        <constraints border-constraint="North"/>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="c7211" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <enabled value="true"/>
+                              <font size="16"/>
+                              <text value="&lt;html&gt;Create and link a Google Sheet&lt;/html&gt;" noi18n="true"/>
+                              <visible value="true"/>
+                            </properties>
+                          </component>
+                          <grid id="b2c67" layout-manager="BorderLayout" hgap="0" vgap="0">
+                            <constraints>
+                              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="fdd84" class="javax.swing.JEditorPane" binding="card4_jep">
+                                <constraints border-constraint="North"/>
+                                <properties>
+                                  <contentType value="text/html"/>
+                                  <editable value="false"/>
+                                  <enabled value="true"/>
+                                  <focusable value="false"/>
+                                  <font size="11"/>
+                                  <opaque value="false"/>
+                                  <text value="&lt;html&gt;&#10;&lt;div&gt;1. Create a Google Cloud Service Account by following &lt;a href=&quot;https://docs.google.com/document/d/e/2PACX-1vSiq2rHiZp9CcACOGg1EHf0nckk28FlCNARLYmhjiTL_O5x2PPA6UOHxX_mWCPj1hTwdxMzUmCtFDzL/pub&quot;&gt;this tutorial&lt;/a&gt;.&lt;/div&gt;&#10;&lt;div&gt;2. Import the credentials file that you downloaded at the end of that tutorial.&lt;/div&gt;&#10;&lt;div&gt;3. Create the Google Sheet, and add the GC Service account to it by following &lt;a href=&quot;https://docs.google.com/document/d/e/2PACX-1vQWZp6dutujZfG-RdqaPYwCZuN8FZg8WMIjt_-308BMOUXznBtWM4GHgjc6khE__lU4SveD3uQrXgkU/pub&quot;&gt;this tutorial&lt;/a&gt;.&lt;/div&gt;&#10;&lt;div&gt;4. Paste the link to your Google Sheet at the bottom of this page, then click 'Test'.&lt;/div&gt;&#10;&lt;/html&gt;&#10;" noi18n="true"/>
+                                  <verifyInputWhenFocusTarget value="true"/>
+                                </properties>
+                                <clientProperties>
+                                  <JEditorPane.honorDisplayProperties class="java.lang.Boolean" value="true"/>
+                                </clientProperties>
+                              </component>
+                            </children>
+                          </grid>
+                        </children>
+                      </grid>
+                      <grid id="6fa40" layout-manager="FormLayout">
+                        <rowspec value="center:max(d;4px):noGrow"/>
+                        <rowspec value="top:4dlu:noGrow"/>
+                        <rowspec value="center:max(d;4px):noGrow"/>
+                        <colspec value="fill:max(d;4px):noGrow"/>
+                        <constraints border-constraint="Center"/>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <grid id="2d499" layout-manager="BorderLayout" hgap="10" vgap="5">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
+                              <forms defaultalign-vert="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="972c4" class="javax.swing.JButton" binding="card4_importButton">
+                                <constraints border-constraint="West"/>
+                                <properties>
+                                  <text value="Import credentials.json"/>
+                                </properties>
+                              </component>
+                              <component id="fe4f" class="javax.swing.JLabel" binding="card4_importLabel">
+                                <constraints border-constraint="Center"/>
+                                <properties>
+                                  <text value="&lt;html&gt;Waiting for import...&lt;/html&gt;"/>
+                                </properties>
+                              </component>
+                              <grid id="39bd3" layout-manager="BorderLayout" hgap="0" vgap="0">
+                                <constraints border-constraint="South"/>
+                                <properties/>
+                                <border type="none"/>
+                                <children>
+                                  <component id="5c9d6" class="javax.swing.JButton" binding="card4_copyEmailButton">
+                                    <constraints border-constraint="West"/>
+                                    <properties>
+                                      <enabled value="false"/>
+                                      <text value="Copy Service Account Email"/>
+                                    </properties>
+                                  </component>
+                                </children>
+                              </grid>
+                            </children>
+                          </grid>
+                          <grid id="52a13" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+                            <constraints>
+                              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
+                              <forms defaultalign-vert="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <grid id="62ef8" layout-manager="BorderLayout" hgap="0" vgap="5">
+                                <constraints/>
+                                <properties>
+                                  <enabled value="true"/>
+                                </properties>
+                                <border type="none"/>
+                                <children>
+                                  <component id="6eeb8" class="javax.swing.JLabel">
+                                    <constraints border-constraint="North"/>
+                                    <properties>
+                                      <text value="Google Sheets URL:"/>
+                                    </properties>
+                                  </component>
+                                  <grid id="de4b4" layout-manager="BorderLayout" hgap="10" vgap="0">
+                                    <constraints border-constraint="Center"/>
+                                    <properties/>
+                                    <border type="none"/>
+                                    <children>
+                                      <component id="b5052" class="javax.swing.JTextField" binding="card4_sheetURLField">
+                                        <constraints border-constraint="Center"/>
+                                        <properties>
+                                          <enabled value="false"/>
+                                          <preferredSize width="500" height="30"/>
+                                        </properties>
+                                      </component>
+                                      <component id="d18e" class="javax.swing.JButton" binding="card4_testButton">
+                                        <constraints border-constraint="East"/>
+                                        <properties>
+                                          <enabled value="false"/>
+                                          <text value="Test"/>
+                                        </properties>
+                                      </component>
+                                    </children>
+                                  </grid>
+                                </children>
+                              </grid>
+                            </children>
+                          </grid>
+                        </children>
+                      </grid>
+                    </children>
+                  </grid>
+                </children>
+              </grid>
+            </children>
+          </grid>
+          <grid id="b8ca9" layout-manager="CardLayout" hgap="0" vgap="0">
+            <constraints>
+              <card name="Card5"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <grid id="525c2" layout-manager="GridBagLayout">
+                <constraints>
+                  <card name="Card1"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <grid id="7497c" layout-manager="BorderLayout" hgap="0" vgap="10">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <grid id="dfbc9" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="0">
+                        <margin top="0" left="0" bottom="0" right="0"/>
+                        <constraints border-constraint="North"/>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="723df" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <enabled value="true"/>
+                              <font size="16"/>
+                              <text value="&lt;html&gt;Setup completed!&lt;/html&gt;" noi18n="true"/>
+                              <visible value="true"/>
+                            </properties>
+                          </component>
+                          <grid id="2fdce" layout-manager="BorderLayout" hgap="0" vgap="0">
+                            <constraints>
+                              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="24863" class="javax.swing.JEditorPane" binding="card5_jep">
+                                <constraints border-constraint="North"/>
+                                <properties>
+                                  <contentType value="text/html"/>
+                                  <editable value="false"/>
+                                  <enabled value="true"/>
+                                  <focusable value="false"/>
+                                  <font size="11"/>
+                                  <opaque value="false"/>
+                                  <text value="&lt;html&gt;&#10;&lt;div&gt;You can now configure the OBS overlay and change the tracker settings. For any questions, check the &lt;a href=&quot;https://github.com/marin774/Julti-Stats-Plugin&quot;&gt;Github&lt;/a&gt; or contact me on Discord @marin774.&lt;/div&gt;&#10;&lt;/html&gt;&#10;" noi18n="true"/>
+                                  <verifyInputWhenFocusTarget value="true"/>
+                                </properties>
+                                <clientProperties>
+                                  <JEditorPane.honorDisplayProperties class="java.lang.Boolean" value="true"/>
+                                </clientProperties>
+                              </component>
+                            </children>
+                          </grid>
+                        </children>
+                      </grid>
+                      <grid id="f0c32" layout-manager="FormLayout">
+                        <rowspec value="center:d:noGrow"/>
+                        <colspec value="fill:d:grow"/>
+                        <constraints border-constraint="Center"/>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="8a08f" class="javax.swing.JButton" binding="finishButton" default-binding="true">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                              <forms defaultalign-horz="false"/>
+                            </constraints>
+                            <properties>
+                              <text value="Finish"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </grid>
+                    </children>
+                  </grid>
+                </children>
+              </grid>
+            </children>
+          </grid>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>

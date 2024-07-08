@@ -1,5 +1,9 @@
 package me.marin.statsplugin.io;
 
+import org.apache.logging.log4j.Level;
+import xyz.duncanruns.julti.Julti;
+import xyz.duncanruns.julti.util.ExceptionUtil;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
@@ -52,12 +56,13 @@ public abstract class FileWatcher implements Runnable {
                 key.reset();
             }
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            Julti.log(Level.ERROR, "Error while reading from records folder:\n" + ExceptionUtil.toDetailedString(e));
         } catch (ClosedWatchServiceException ignored) {
             /*
             Exception is thrown because WatchService#take is still waiting, but WatchService#close was called.
             It should be ignored.
             */
+            Julti.log(Level.DEBUG, "Record folder watcher was closed");
         }
     }
 

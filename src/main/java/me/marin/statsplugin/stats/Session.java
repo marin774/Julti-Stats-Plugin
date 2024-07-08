@@ -1,17 +1,20 @@
 package me.marin.statsplugin.stats;
 
-import me.marin.statsplugin.StatsPlugin;
 import me.marin.statsplugin.StatsPluginUtil;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.util.ExceptionUtil;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import static me.marin.statsplugin.StatsPlugin.OBS_OVERLAY_PATH;
+import static me.marin.statsplugin.StatsPlugin.OBS_OVERLAY_TEMPLATE_PATH;
 
 public class Session {
 
@@ -40,14 +43,18 @@ public class Session {
         long enters = calculateEnters();
         double average = calculateAverage();
         double nph = calculateNPH();
+        if (Double.isNaN(nph)) {
+            nph = 0;
+        }
 
         try {
-            String template = Files.readString(StatsPlugin.OBS_OVERLAY_TEMPLATE_PATH);
+            String template = new String(Files.readAllBytes(OBS_OVERLAY_TEMPLATE_PATH), StandardCharsets.UTF_8);
             template = template.replaceAll("%enters%", String.valueOf(enters));
-            template = template.replaceAll("%nph%", Double.isNaN(nph) ? "" : String.format(Locale.US, "%.1f", nph));
+            template = template.replaceAll("%nph%", String.format(Locale.US, "%.1f", nph));
             template = template.replaceAll("%average%", StatsPluginUtil.formatTime((long)average, false));
 
-            Files.writeString(StatsPlugin.OBS_OVERLAY_PATH, template, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            Julti.log(Level.DEBUG, "Setting overlay to:\n" + template);
+            Files.write(OBS_OVERLAY_PATH, template.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
             Julti.log(Level.ERROR, "Failed to update OBS overlay:\n" + ExceptionUtil.toDetailedString(e));
         }
@@ -60,9 +67,11 @@ public class Session {
     public double calculateAverage() {
         long totalMillis = 0;
         int count = 0;
-        for (StatsRecord record : records.stream().filter(record -> record.nether() != null).toList()) {
-            totalMillis += record.nether();
-            count += 1;
+        for (StatsRecord record : records) {
+            if (record.nether() != null) {
+                totalMillis += record.nether();
+                count += 1;
+            }
         }
 
         return (double) totalMillis / count;

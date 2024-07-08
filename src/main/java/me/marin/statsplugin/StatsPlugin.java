@@ -15,6 +15,7 @@ import xyz.duncanruns.julti.JultiOptions;
 import xyz.duncanruns.julti.plugin.PluginEvents;
 import xyz.duncanruns.julti.plugin.PluginInitializer;
 import xyz.duncanruns.julti.plugin.PluginManager;
+import xyz.duncanruns.julti.util.ExceptionUtil;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -24,9 +25,10 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 
-public class StatsPlugin implements PluginInitializer {
+import static me.marin.statsplugin.VersionUtil.CURRENT_VERSION;
+import static me.marin.statsplugin.VersionUtil.version;
 
-    public static final String VERSION = "0.3.2";
+public class StatsPlugin implements PluginInitializer {
 
     public static final Path STATS_FOLDER_PATH = JultiOptions.getJultiDir().resolve("stats-plugin");
     public static final Path GOOGLE_SHEETS_CREDENTIALS_PATH = STATS_FOLDER_PATH.resolve("credentials.json");
@@ -38,6 +40,8 @@ public class StatsPlugin implements PluginInitializer {
 
     public static StatsGUI statsGUI;
     public static GoogleSheets googleSheets;
+
+    public static boolean isTrackerRunning = false;
 
     /**
      * Used for dev testing only.
@@ -51,7 +55,7 @@ public class StatsPlugin implements PluginInitializer {
     @Override
     public void initialize() {
         PluginEvents.RunnableEventType.LAUNCH.register(() -> {
-            Julti.log(Level.INFO, "Running StatsPlugin v" + VERSION + "!");
+            Julti.log(Level.INFO, "Running StatsPlugin v" + CURRENT_VERSION + "!");
 
             STATS_FOLDER_PATH.toFile().mkdirs();
 
@@ -74,17 +78,55 @@ public class StatsPlugin implements PluginInitializer {
             CURRENT_SESSION.updateOverlay();
 
             StatsPluginSettings.load();
+            VersionUtil.Version version = getVersionFromSettings();
+            if (version.isOlderThan(CURRENT_VERSION)) {
+                updateFrom(version);
+            }
+
             StatsPlugin.reloadGoogleSheets();
 
-            StatsPluginUtil.runAsync("records-folder-watcher", new RecordsFolderWatcher(Paths.get(StatsPluginSettings.getInstance().recordsPath)));
             if (StatsPluginSettings.getInstance().deleteOldRecords) {
                 StatsPluginUtil.runAsync("old-record-bopper", new OldRecordBopperRunnable());
             }
+
+            Path recordsPath;
+            try {
+                recordsPath = Paths.get(StatsPluginSettings.getInstance().recordsPath);
+            } catch (Exception e) {
+                Julti.log(Level.INFO, "Invalid SpeedrunIGT records folder in settings, change it manually settings.json and restart Julti!\n"+ ExceptionUtil.toDetailedString(e));
+                return;
+            }
+            StatsPluginUtil.runAsync("records-folder-watcher", new RecordsFolderWatcher(recordsPath));
+
         });
     }
 
+    private static VersionUtil.Version getVersionFromSettings() {
+        String versionString = StatsPluginSettings.getInstance().version;
+        if (versionString == null) {
+            versionString = "0.3.2"; // This is hardcoded because I'm adding versioning to settings after 0.3.2
+        }
+        return VersionUtil.version(versionString);
+    }
+
+    public static void updateFrom(VersionUtil.Version version) {
+        Julti.log(Level.INFO, "Updating data from version " + version + ".");
+        if (version.isOlderThan(version("0.4.0"))) {
+            StatsPluginSettings.getInstance().completedSetup = true;
+            Julti.log(Level.INFO, "[0.4.0] 'completed setup' set to true.");
+            if (StatsPluginSettings.getInstance().breakThreshold == 30) {
+                StatsPluginSettings.getInstance().breakThreshold = 5;
+                Julti.log(Level.INFO, "[0.4.0] 'break threshold' set to 5s (from default 30s).");
+            }
+        }
+
+        StatsPluginSettings.getInstance().version = CURRENT_VERSION.toString();
+        StatsPluginSettings.save();
+        Julti.log(Level.INFO, "Updated all data to v" + CURRENT_VERSION + "!");
+    }
+
     public static boolean reloadGoogleSheets() {
-        if (StatsPluginSettings.getInstance().useSheets && Files.exists(GOOGLE_SHEETS_CREDENTIALS_PATH)) {
+        if (StatsPluginSettings.getInstance().useSheets && Files.exists(GOOGLE_SHEETS_CREDENTIALS_PATH) && StatsPluginSettings.getInstance().sheetLink != null) {
             googleSheets = new GoogleSheets(GOOGLE_SHEETS_CREDENTIALS_PATH);
             return googleSheets.connect();
         }

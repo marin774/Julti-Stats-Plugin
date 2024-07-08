@@ -19,6 +19,7 @@ import xyz.duncanruns.julti.util.ExceptionUtil;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.security.GeneralSecurityException;
 import java.util.*;
 
 public class GoogleSheets {
@@ -27,7 +28,7 @@ public class GoogleSheets {
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private static final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
 
-    private Path credentialsPath;
+    private final Path credentialsPath;
     private Sheets service;
     private String spreadsheetId;
 
@@ -53,11 +54,13 @@ public class GoogleSheets {
                 Julti.log(Level.ERROR, "Couldn't find Google Sheets ID in URL (" + sheetLink + "). Make sure that the provided link is valid, then click 'Reconnect to Google Sheets' button.");
                 return false;
             }
-            GoogleCredentials credential = authorize();
+            GoogleCredentials credential = authorize(credentialsPath);
             HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credential);
             this.service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, requestInitializer)
                     .setApplicationName(APPLICATION_NAME)
                     .build();
+
+            getRawDataSheet();
 
             Julti.log(Level.INFO, "Connected to Google Sheets!");
             StatsPluginUtil.runAsync("google-sheets", this::tempFix);
@@ -70,11 +73,15 @@ public class GoogleSheets {
 
     private Sheet rawDataSheet;
 
-    private void updateRawDataSheet() throws IOException {
+    private void getRawDataSheet() throws IOException {
         if (rawDataSheet == null) {
-            this.rawDataSheet = service.spreadsheets().getByDataFilter(spreadsheetId, new GetSpreadsheetByDataFilterRequest().setIncludeGridData(false).setDataFilters(
-                    List.of(new DataFilter().setA1Range("Raw Data"))
-            )).execute().getSheets().get(0);
+            List<DataFilter> dataFilters = new ArrayList<>();
+            dataFilters.add(new DataFilter().setA1Range("Raw Data"));
+            this.rawDataSheet = service.spreadsheets()
+                    .getByDataFilter(spreadsheetId, new GetSpreadsheetByDataFilterRequest().setIncludeGridData(false).setDataFilters(dataFilters))
+                    .execute()
+                    .getSheets()
+                    .get(0);
         }
     }
 
@@ -84,7 +91,7 @@ public class GoogleSheets {
     private void tempFix() {
         StatsPluginUtil.runAsync("google-sheets", () -> {
             try {
-                updateRawDataSheet();
+                getRawDataSheet();
                 Integer sheetId = rawDataSheet.getProperties().getSheetId();
 
                 List<Request> requests = new ArrayList<>();
@@ -106,13 +113,13 @@ public class GoogleSheets {
     public void insertRecord(StatsRecord record) {
         StatsPluginUtil.runAsync("google-sheets", () -> {
             try {
-                updateRawDataSheet();
+                getRawDataSheet();
                 Integer sheetId = rawDataSheet.getProperties().getSheetId();
 
                 List<Request> requests = new ArrayList<>();
                 requests.add(new Request().setInsertDimension(
                                 new InsertDimensionRequest()
-                                        .setInheritFromBefore(false) /* inherit from the row after! */
+                                        .setInheritFromBefore(false) /* inherit from the row after instead */
                                         .setRange(
                                                 new DimensionRange()
                                                         .setDimension("ROWS")
@@ -135,13 +142,33 @@ public class GoogleSheets {
 
             } catch (Exception e) {
                 Julti.log(Level.ERROR, "Failed to update Google Sheets: " + ExceptionUtil.toDetailedString(e));
+
             }
         });
 
     }
 
-    private GoogleCredentials authorize() throws IOException {
+    private static GoogleCredentials authorize(Path credentialsPath) throws IOException {
         return ServiceAccountCredentials.fromStream(new FileInputStream(credentialsPath.toFile())).createScoped(SCOPES);
+    }
+
+    public static boolean test(String spreadsheetId, Path credentialsPath) throws IOException, GeneralSecurityException {
+        NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+
+        GoogleCredentials credential = authorize(credentialsPath);
+        HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credential);
+
+        Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, requestInitializer)
+                .setApplicationName(APPLICATION_NAME)
+                .build();
+
+        List<DataFilter> dataFilters = new ArrayList<>();
+        dataFilters.add(new DataFilter().setA1Range("Raw Data"));
+        return service.spreadsheets()
+                .getByDataFilter(spreadsheetId, new GetSpreadsheetByDataFilterRequest().setIncludeGridData(false).setDataFilters(dataFilters))
+                .execute()
+                .getSheets()
+                .size() == 1;
     }
 
 }

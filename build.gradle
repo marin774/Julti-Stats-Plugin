@@ -22,8 +22,8 @@ group = project.maven_group
 version = project.plugin_version
 archivesBaseName = project.archives_base_name
 
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
@@ -39,6 +39,8 @@ dependencies {
     // Google Sheets API
     shadow 'com.google.apis:google-api-services-sheets:v4-rev20220927-2.0.0'
     shadow 'com.google.auth:google-auth-library-oauth2-http:1.16.1'
+    shadow group: 'com.jgoodies', name: 'jgoodies-forms', version: '1.9.0'
+
 }
 
 
@@ -50,7 +52,7 @@ processResources {
     }
 }
 
-// Weird compiled .class files which Julti doesn't like, but aren't necessary ¯\_(ツ)_/¯
+// Compiled .class files which Julti complains about, but aren't necessary, so they get excluded ¯\_(ツ)_/¯
 shadowJar {
     dependencies {
         exclude 'com/google/common/collect/ImmutableSortedSetFauxverideShim.class'

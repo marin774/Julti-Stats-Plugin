@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="me.marin.statsplugin.gui.StatsGUI">
   <grid id="27dc6" binding="mainPanel" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="20" y="20" width="690" height="372"/>
+      <xy x="20" y="20" width="703" height="731"/>
     </constraints>
     <properties>
       <preferredSize width="600" height="350"/>
@@ -12,25 +12,15 @@
       <size top="5" left="5" bottom="5" right="5"/>
     </border>
     <children>
-      <component id="689d6" class="javax.swing.JCheckBox" binding="trackerEnabledCheckbox">
-        <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="1.0" weighty="0.0"/>
-        </constraints>
-        <properties>
-          <text value="Tracker enabled?"/>
-        </properties>
-      </component>
       <grid id="f003e" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag weightx="1.0" weighty="1.0"/>
         </constraints>
         <properties/>
         <border type="none"/>
         <children>
-          <grid id="ed3eb" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="5" left="0" bottom="5" right="0"/>
+          <grid id="ed3eb" binding="setupPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
@@ -38,189 +28,176 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="1729d" class="javax.swing.JButton" binding="importSettingsJsonButton">
-                <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
+              <component id="1729d" class="javax.swing.JButton" binding="setupButton">
+                <constraints/>
                 <properties>
-                  <text value="Import settings.json"/>
-                </properties>
-              </component>
-              <component id="4f61" class="javax.swing.JButton" binding="importCredentialsJsonButton" default-binding="true">
-                <constraints>
-                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Import credentials.json"/>
-                </properties>
-              </component>
-              <component id="31e28" class="javax.swing.JButton" binding="importStatsCsvButton">
-                <constraints>
-                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Import stats.csv"/>
+                  <text value="Setup Tracker"/>
                 </properties>
               </component>
               <component id="af9b1" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
+                <constraints/>
                 <properties>
-                  <text value="Import:"/>
+                  <text value="Complete the quick Setup so you can start using the tracker."/>
                 </properties>
               </component>
             </children>
           </grid>
-          <grid id="f4b40" layout-manager="GridLayoutManager" row-count="2" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="5" left="0" bottom="5" right="0"/>
+          <grid id="396cb" binding="settingsPanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
-            <properties/>
+            <properties>
+              <visible value="true"/>
+            </properties>
             <border type="none"/>
             <children>
-              <component id="bd7bc" class="javax.swing.JLabel">
+              <grid id="66bb4" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="5" left="0" bottom="5" right="0"/>
                 <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
                 </constraints>
-                <properties>
-                  <text value="Open:"/>
-                </properties>
-              </component>
-              <component id="d6750" class="javax.swing.JButton" binding="openGoogleSheetButton" default-binding="true">
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="d6750" class="javax.swing.JButton" binding="openGoogleSheetButton" default-binding="true">
+                    <constraints>
+                      <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Open Google Sheet"/>
+                      <visible value="true"/>
+                    </properties>
+                  </component>
+                  <component id="be662" class="javax.swing.JButton" binding="openStatsBrowserButton" default-binding="true">
+                    <constraints>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="View Stats in browser"/>
+                      <visible value="true"/>
+                    </properties>
+                  </component>
+                  <component id="573c4" class="javax.swing.JButton" binding="OBSOverlayButton" default-binding="true">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Configure OBS overlay"/>
+                    </properties>
+                  </component>
+                  <component id="e24f" class="javax.swing.JButton" binding="clearSpeedrunIGTRecordsButton" default-binding="true">
+                    <constraints>
+                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Clear SpeedrunIGT records"/>
+                    </properties>
+                  </component>
+                  <component id="b2413" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Utility:"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="b13b0" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
-                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
                 </constraints>
-                <properties>
-                  <text value="Open Google Sheet"/>
-                </properties>
-              </component>
-              <component id="be662" class="javax.swing.JButton" binding="openStatsBrowserButton" default-binding="true">
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="248ea" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Debug:"/>
+                    </properties>
+                  </component>
+                  <component id="45005" class="javax.swing.JButton" binding="startANewSessionButton">
+                    <constraints>
+                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Start a new session"/>
+                    </properties>
+                  </component>
+                  <component id="e2552" class="javax.swing.JButton" binding="reconnectToGoogleSheetsButton" default-binding="true">
+                    <constraints>
+                      <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Reconnect to Google Sheets"/>
+                    </properties>
+                  </component>
+                  <component id="4a499" class="javax.swing.JButton" binding="reloadSettingsButton" default-binding="true">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Reload settings"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="f4b40" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="5" left="0" bottom="5" right="0"/>
                 <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
                 </constraints>
-                <properties>
-                  <text value="Open Stats (browser)"/>
-                </properties>
-              </component>
-              <component id="26f17" class="javax.swing.JButton" binding="openSettingsJson">
-                <constraints>
-                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <actionCommand value="Open settings.json"/>
-                  <label value="Open settings.json"/>
-                  <text value="Open settings.json"/>
-                </properties>
-              </component>
-              <component id="b5a52" class="javax.swing.JButton" binding="openStatsCsv">
-                <constraints>
-                  <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <actionCommand value="Open stats.csv"/>
-                  <label value="Open stats.csv"/>
-                  <text value="Open stats.csv"/>
-                </properties>
-              </component>
-            </children>
-          </grid>
-          <grid id="66bb4" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="5" left="0" bottom="5" right="0"/>
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
-            </constraints>
-            <properties/>
-            <border type="none"/>
-            <children>
-              <component id="e24f" class="javax.swing.JButton" binding="clearSpeedrunIGTRecordsButton" default-binding="true">
-                <constraints>
-                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Clear SpeedrunIGT records"/>
-                </properties>
-              </component>
-              <component id="573c4" class="javax.swing.JButton" binding="OBSOverlayButton" default-binding="true">
-                <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Configure OBS overlay"/>
-                </properties>
-              </component>
-              <component id="b2413" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Utility:"/>
-                </properties>
-              </component>
-            </children>
-          </grid>
-          <grid id="b13b0" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="25" left="0" bottom="5" right="0"/>
-            <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
-            </constraints>
-            <properties/>
-            <border type="none"/>
-            <children>
-              <component id="248ea" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Debug:"/>
-                </properties>
-              </component>
-              <component id="4a499" class="javax.swing.JButton" binding="reloadSettingsButton" default-binding="true">
-                <constraints>
-                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Reload settings"/>
-                </properties>
-              </component>
-              <component id="e2552" class="javax.swing.JButton" binding="reconnectToGoogleSheetsButton" default-binding="true">
-                <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Reconnect to Google Sheets"/>
-                </properties>
-              </component>
-              <component id="45005" class="javax.swing.JButton" binding="startANewSessionButton">
-                <constraints>
-                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Start a new session"/>
-                </properties>
-              </component>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="bd7bc" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Settings:"/>
+                    </properties>
+                  </component>
+                  <grid id="dcc19" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="26f17" class="javax.swing.JButton" binding="openSettingsJson">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <actionCommand value="Open settings.json"/>
+                          <label value="Edit file manually"/>
+                          <text value="Edit file manually"/>
+                        </properties>
+                      </component>
+                      <component id="689d6" class="javax.swing.JCheckBox" binding="trackerEnabledCheckbox">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Enable tracker?"/>
+                          <visible value="true"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                </children>
+              </grid>
             </children>
           </grid>
         </children>
       </grid>
-      <component id="c09e3" class="javax.swing.JSeparator">
-        <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag top="10" left="0" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
-        </constraints>
-        <properties/>
-      </component>
-      <component id="19301" class="javax.swing.JSeparator">
-        <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag top="10" left="0" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
-        </constraints>
-        <properties/>
-      </component>
     </children>
   </grid>
 </form>

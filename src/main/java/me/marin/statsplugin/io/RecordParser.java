@@ -57,9 +57,6 @@ public class RecordParser {
     }
 
     public boolean validateRSG() {
-        if (!StatsPluginSettings.getInstance().detectRSG) {
-            return true;
-        }
         if (!record.get("run_type").getAsString().equals("random_seed")) {
             return false;
         }
@@ -222,13 +219,16 @@ public class RecordParser {
         boolean visitedOceanOrBeach = false;
         if (adv != null) {
             JsonObject criteria = getNestedJSONObject(adv, "minecraft:adventure/adventuring_time", "criteria");
-            Set<String> visitedBiomes = criteria.keySet();
-            for (String visitedBiome : visitedBiomes) {
-                if (visitedBiome.contains("beach") || visitedBiome.contains("ocean") && getAdvancementIGT(criteria, visitedBiome) < 180000) {
-                    visitedOceanOrBeach = true;
-                    break;
+            if (criteria != null) {
+                Set<String> visitedBiomes = criteria.keySet();
+                for (String visitedBiome : visitedBiomes) {
+                    if (visitedBiome.contains("beach") || visitedBiome.contains("ocean") && getAdvancementIGT(criteria, visitedBiome) < 180000) {
+                        visitedOceanOrBeach = true;
+                        break;
+                    }
                 }
             }
+
         }
         if (visitedOceanOrBeach) {
 
@@ -306,7 +306,18 @@ public class RecordParser {
         return element.getAsLong();
     }
 
-    private static final List<String> TIMELINES_SPLITS = List.of("enter_nether", "enter_bastion", "enter_fortress", "nether_travel", "enter_stronghold", "enter_end");
+    private static final List<String> TIMELINES_SPLITS;
+
+    static {
+        TIMELINES_SPLITS = new ArrayList<>();
+        TIMELINES_SPLITS.add("enter_nether");
+        TIMELINES_SPLITS.add("enter_bastion");
+        TIMELINES_SPLITS.add("enter_fortress");
+        TIMELINES_SPLITS.add("nether_travel");
+        TIMELINES_SPLITS.add("enter_stronghold");
+        TIMELINES_SPLITS.add("enter_end");
+    }
+
     public Map<String, Long> getTimelinesMap() {
         JsonArray timelines = record.get("timelines").getAsJsonArray();
         Map<String, Long> map = new LinkedHashMap<>();

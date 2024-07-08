@@ -3,6 +3,7 @@ package me.marin.statsplugin.io;
 import com.google.gson.JsonObject;
 import me.marin.statsplugin.StatsPlugin;
 import me.marin.statsplugin.StatsPluginUtil;
+import me.marin.statsplugin.VersionUtil;
 import me.marin.statsplugin.stats.StatsRecord;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
@@ -27,7 +28,7 @@ public class RecordsFolderWatcher extends FileWatcher {
             .toFormatter()
             .withZone(ZoneId.systemDefault());
 
-    private static final String SESSION_MARKER = "$J" + StatsPlugin.VERSION;
+    private static final String SESSION_MARKER = "$J" + VersionUtil.CURRENT_VERSION;
 
     private int wallResetsSincePrev = 0;
     private int splitlessResets = 0;
@@ -42,8 +43,13 @@ public class RecordsFolderWatcher extends FileWatcher {
     // Completed runs get updated on completion and on reset, which means they would get tracked twice - this prevents that.
     private final List<String> completedRunsRecordIds = new ArrayList<>();
 
+    // Sometimes record files get updated twice (without changing)
+    // FIXME: if more splits get added, ignore this
+    private final List<String> mostRecentRecordIds = new ArrayList<>();
+
     public RecordsFolderWatcher(Path path) {
         super(path.toFile());
+        Julti.log(Level.DEBUG, "Records folder watcher is running...");
     }
 
     /**
@@ -54,7 +60,7 @@ public class RecordsFolderWatcher extends FileWatcher {
         if (!StatsPluginSettings.getInstance().trackerEnabled) {
             return;
         }
-        if (completedRunsRecordIds.contains(file.getName())) {
+        if (completedRunsRecordIds.contains(file.getName()) || mostRecentRecordIds.contains(file.getName())) {
             return;
         }
         if (JultiOptions.getJultiOptions().resetStyle.equals("Benchmark")) {
@@ -103,7 +109,7 @@ public class RecordsFolderWatcher extends FileWatcher {
             return;
         }
 
-        Julti.log(Level.DEBUG, "Done split: " + recordParser.hasObtainedIron() + ", " + recordParser.hasObtainedWood() + ", " + recordParser.hasObtainedWood() + ", " + recordParser.getTimelinesMap());
+        Julti.log(Level.DEBUG, "Done splits: " + recordParser.hasObtainedIron() + ", " + recordParser.hasObtainedWood() + ", " + recordParser.hasObtainedWood() + ", " + recordParser.getTimelinesMap());
 
         String date = DATETIME_FORMATTER.format(Instant.ofEpochMilli(recordParser.getDate()));
         Map<String, Long> timelines = recordParser.getTimelinesMap();
@@ -138,6 +144,10 @@ public class RecordsFolderWatcher extends FileWatcher {
 
         if (recordParser.isCompleted()) {
             completedRunsRecordIds.add(file.getName());
+        }
+        mostRecentRecordIds.add(file.getName());
+        if (mostRecentRecordIds.size() > 5) {
+            mostRecentRecordIds.remove(0);
         }
 
         StatsPlugin.CURRENT_SESSION.addRun(csvRecord, true);
