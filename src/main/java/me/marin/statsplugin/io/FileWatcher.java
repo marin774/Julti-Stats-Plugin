@@ -17,7 +17,7 @@ public abstract class FileWatcher implements Runnable {
 
     protected final File parentDirectory;
 
-    private final WatchService watcher;
+    private WatchService watcher;
 
     public FileWatcher(File file) {
         this.file = file;
@@ -27,7 +27,7 @@ public abstract class FileWatcher implements Runnable {
         try {
             watcher = FileSystems.getDefault().newWatchService();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            Julti.log(Level.ERROR, "Could not start FileWatcher:\n" + ExceptionUtil.toDetailedString(e));
         }
     }
 

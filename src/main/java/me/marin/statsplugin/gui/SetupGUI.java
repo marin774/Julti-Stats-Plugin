@@ -200,6 +200,8 @@ public class SetupGUI extends JFrame {
                 }
 
                 StatsPluginSettings.getInstance().useSheets = true;
+
+                StatsPlugin.reloadGoogleSheets();
             }
             StatsPluginSettings.getInstance().completedSetup = true;
             StatsPluginSettings.getInstance().trackerEnabled = true;
