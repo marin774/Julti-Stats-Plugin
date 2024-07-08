@@ -35,6 +35,11 @@ Depending on what you did in setup, this menu might look different.
 - **Enable Tracker?** - if you don't want your stats to track, simply uncheck this
 - **Edit file manually** - opens the `settings.json` file you can edit (remember to press **Reload Settings** once you're done!)
 
+### Known issues
+- SpeedrunIGT 'Make Record' setting has to be set to 'Every run' (and NOT 'Completed Run')
+![image](https://github.com/marin774/Julti-Stats-Plugin/assets/87690741/50276c61-a03a-470d-b430-731337c4f811)
+
+
 ### If you have any questions, contact me on discord @marin774
 
 > Note: If you want to work on the code, please note that there is some mess with gradle dependencies, and you won't be able to run the Main method, instead build the jar with `gradle clean shadowJar copyJar` and put it in the Julti plugin folder directly (copyJar at the end of the build command does that automatically). For more information ask me on discord.
