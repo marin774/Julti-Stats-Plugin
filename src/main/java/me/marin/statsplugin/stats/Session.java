@@ -31,12 +31,12 @@ public class Session {
         return session;
     }
 
-    public void addRun(StatsRecord record, boolean log) {
-        if (log) {
-            Julti.log(Level.DEBUG, "Added this run, updating overlay: " + record);
-        }
+    public void addRun(StatsRecord record, boolean isNewRun) {
         records.add(record);
-        updateOverlay();
+        if (isNewRun) {
+            Julti.log(Level.DEBUG, "Added this run, updating overlay: " + record);
+            updateOverlay();
+        }
     }
 
     public void updateOverlay() {

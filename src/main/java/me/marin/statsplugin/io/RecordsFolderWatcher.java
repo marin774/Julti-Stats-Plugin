@@ -60,20 +60,25 @@ public class RecordsFolderWatcher extends FileWatcher {
         if (!StatsPluginSettings.getInstance().trackerEnabled) {
             return;
         }
-        if (completedRunsRecordIds.contains(file.getName()) || mostRecentRecordIds.contains(file.getName())) {
+        if (JultiOptions.getJultiOptions().resetStyle.equals("Benchmark")) {
             return;
         }
-        if (JultiOptions.getJultiOptions().resetStyle.equals("Benchmark")) {
+        if (completedRunsRecordIds.contains(file.getName()) || mostRecentRecordIds.contains(file.getName())) {
+            Julti.log(Level.DEBUG, "Not saving run because it was already completed/recently updated.");
             return;
         }
 
         JsonObject recordJSON = StatsPluginUtil.readJSON(file);
         if (recordJSON == null || recordJSON.isJsonNull()) {
+            Julti.log(Level.DEBUG, "Not saving run because record is null.");
             return;
         }
 
         RecordParser recordParser = new RecordParser(file);
-        if (!recordParser.validateRSG()) return;
+        if (!recordParser.validateRSG()) {
+            Julti.log(Level.DEBUG, "Not saving run because it's not rsg.");
+            return;
+        }
 
         long now = System.currentTimeMillis();
         long finalRTA = recordJSON.get("final_rta").getAsLong();
@@ -104,6 +109,7 @@ public class RecordsFolderWatcher extends FileWatcher {
         RTADistribution += finalRTA/1000 + "$";
 
         if (!recordParser.hasDoneAnySplit()) {
+            Julti.log(Level.DEBUG, "Not saving run because it has no splits. (" + finalRTA + "ms rta)");
             splitlessResets++;
             RTASincePrev += finalRTA;
             return;
@@ -162,7 +168,6 @@ public class RecordsFolderWatcher extends FileWatcher {
         breakRTASincePrev = 0;
         wallTimeSincePrev = 0;
         RTADistribution = "";
-
     }
 
 

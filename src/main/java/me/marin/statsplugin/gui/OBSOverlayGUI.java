@@ -155,7 +155,7 @@ public class OBSOverlayGUI extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
         mainPanel.add(panel2, gbc);
         final JLabel label2 = new JLabel();
-        label2.setText("Overlay overlay template:");
+        label2.setText("Overlay template:");
         panel2.add(label2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));

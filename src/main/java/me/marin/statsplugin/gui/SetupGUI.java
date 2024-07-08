@@ -190,8 +190,8 @@ public class SetupGUI extends JFrame {
                 try {
                     Files.copy(credentialsFilePath, GOOGLE_SHEETS_CREDENTIALS_PATH, StandardCopyOption.REPLACE_EXISTING);
                 } catch (Exception e) {
-                    Julti.log(Level.INFO, ExceptionUtil.toDetailedString(e));
-                    JOptionPane.showMessageDialog(null, "Looks like you deleted the credentials file before the setup was over. Please run the setup again...");
+                    Julti.log(Level.DEBUG, ExceptionUtil.toDetailedString(e));
+                    JOptionPane.showMessageDialog(null, "Looks like you deleted the credentials file before the setup was over. Please run the setup again.");
                     return;
                 }
 
@@ -201,11 +201,12 @@ public class SetupGUI extends JFrame {
 
                 StatsPluginSettings.getInstance().useSheets = true;
             }
-
-            this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
             StatsPluginSettings.getInstance().completedSetup = true;
             StatsPluginSettings.getInstance().trackerEnabled = true;
             StatsPluginSettings.save();
+
+            this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+
             StatsPlugin.statsGUI.updateGUI();
         });
     }

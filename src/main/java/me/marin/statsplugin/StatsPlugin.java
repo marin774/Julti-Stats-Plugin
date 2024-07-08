@@ -93,7 +93,7 @@ public class StatsPlugin implements PluginInitializer {
             try {
                 recordsPath = Paths.get(StatsPluginSettings.getInstance().recordsPath);
             } catch (Exception e) {
-                Julti.log(Level.INFO, "Invalid SpeedrunIGT records folder in settings, change it manually settings.json and restart Julti!\n"+ ExceptionUtil.toDetailedString(e));
+                Julti.log(Level.ERROR, "Invalid SpeedrunIGT records folder in settings, change it manually settings.json and restart Julti!\n"+ ExceptionUtil.toDetailedString(e));
                 return;
             }
             StatsPluginUtil.runAsync("records-folder-watcher", new RecordsFolderWatcher(recordsPath));

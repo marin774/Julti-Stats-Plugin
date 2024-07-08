@@ -3,6 +3,7 @@ package me.marin.statsplugin.io;
 import me.marin.statsplugin.stats.Session;
 import me.marin.statsplugin.stats.StatsRecord;
 import org.apache.commons.io.input.ReversedLinesFileReader;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.util.ExceptionUtil;
@@ -12,13 +13,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
 public class StatsFileIO {
 
     public static final Path STATS_CSV_PATH = Paths.get(System.getProperty("user.home")).resolve(".Julti").resolve("stats-plugin").resolve("stats.csv");
-    public static final Path TEMP_STATS_CSV_PATH = Paths.get(System.getProperty("user.home")).resolve(".Julti").resolve("stats-plugin").resolve("temp-stats");
+    public static final Path TEMP_STATS_CSV_PATH = Paths.get(System.getProperty("user.home")).resolve(".Julti").resolve("stats-plugin").resolve("temp.csv");
 
     private static final StatsFileIO INSTANCE = new StatsFileIO();
 
@@ -78,22 +80,34 @@ public class StatsFileIO {
             writer.write(statsRecord.toCSVLine());
             writer.newLine();
         } catch (IOException e) {
-            Julti.log(Level.ERROR, "Error while writing stats to stats.csv:\n" + ExceptionUtil.toDetailedString(e));
+            Julti.log(Level.ERROR, "Error while writing stats to temp.csv:\n" + ExceptionUtil.toDetailedString(e));
         }
     }
 
-    public List<StatsRecord> getTempStats() {
-        Stack<StatsRecord> runs = new Stack<>();
+    public List<StatsRecord> getAllTempStats() {
+        List<StatsRecord> runs = new ArrayList<>();
         try {
-            List<String> list = Files.readAllLines(STATS_CSV_PATH);
-            for (String line : list) {
-                StatsRecord statsRecord = StatsRecord.fromCSVLine(line);
-                runs.add(statsRecord);
+            if (Files.exists(TEMP_STATS_CSV_PATH)) {
+                List<String> list = Files.readAllLines(TEMP_STATS_CSV_PATH);
+                for (String line : list) {
+                    if (StringUtils.isBlank(line)) continue;
+                    StatsRecord statsRecord = StatsRecord.fromCSVLine(line);
+                    runs.add(statsRecord);
+                }
             }
+
         } catch (IOException e) {
-            Julti.log(Level.ERROR, "Error while reading temp-stats:\n" + ExceptionUtil.toDetailedString(e));
+            Julti.log(Level.ERROR, "Error while reading temp.csv:\n" + ExceptionUtil.toDetailedString(e));
         }
         return runs;
+    }
+
+    public void clearTempStats() {
+        try {
+            Files.deleteIfExists(TEMP_STATS_CSV_PATH);
+        } catch (IOException e) {
+            Julti.log(Level.ERROR, "Error while deleting temp.csv:\n" + ExceptionUtil.toDetailedString(e));
+        }
     }
 
     public Path getPath() {

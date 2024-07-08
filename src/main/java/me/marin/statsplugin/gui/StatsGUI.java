@@ -4,7 +4,6 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import me.marin.statsplugin.StatsPluginUtil;
 import me.marin.statsplugin.io.OldRecordBopperRunnable;
-import me.marin.statsplugin.io.StatsFileIO;
 import me.marin.statsplugin.io.StatsPluginSettings;
 import me.marin.statsplugin.stats.Session;
 import org.apache.logging.log4j.Level;
@@ -39,6 +38,7 @@ public class StatsGUI extends JFrame {
     private JButton startANewSessionButton;
     private JPanel setupPanel;
     private JPanel settingsPanel;
+    private JCheckBox simulateOfflineCheckbox;
 
     private OBSOverlayGUI obsOverlayGUI;
     private SetupGUI setupGUI;
@@ -65,6 +65,13 @@ public class StatsGUI extends JFrame {
             settings.trackerEnabled = trackerEnabledCheckbox.isSelected();
             StatsPluginSettings.save();
             Julti.log(Level.INFO, settings.trackerEnabled ? "Now tracking stats." : "No longer tracking stats.");
+        });
+
+        // This is used for testing Google Sheets as if you or Google Sheets are down
+        simulateOfflineCheckbox.addActionListener(e -> {
+            StatsPluginSettings settings = StatsPluginSettings.getInstance();
+            settings.simulateNoInternet = simulateOfflineCheckbox.isSelected();
+            StatsPluginSettings.save();
         });
 
         /*
@@ -312,11 +319,11 @@ public class StatsGUI extends JFrame {
         openGoogleSheetButton = new JButton();
         openGoogleSheetButton.setText("Open Google Sheet");
         openGoogleSheetButton.setVisible(true);
-        panel2.add(openGoogleSheetButton, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel2.add(openGoogleSheetButton, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         openStatsBrowserButton = new JButton();
         openStatsBrowserButton.setText("View Stats in browser");
         openStatsBrowserButton.setVisible(true);
-        panel2.add(openStatsBrowserButton, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel2.add(openStatsBrowserButton, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         OBSOverlayButton = new JButton();
         OBSOverlayButton.setText("Configure OBS overlay");
         panel2.add(OBSOverlayButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -348,7 +355,7 @@ public class StatsGUI extends JFrame {
         label4.setText("Settings:");
         panel4.add(label4, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel5 = new JPanel();
-        panel5.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel5.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
         panel4.add(panel5, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         openSettingsJson = new JButton();
         openSettingsJson.setActionCommand("Open settings.json");
@@ -359,6 +366,10 @@ public class StatsGUI extends JFrame {
         trackerEnabledCheckbox.setText("Enable tracker?");
         trackerEnabledCheckbox.setVisible(true);
         panel5.add(trackerEnabledCheckbox, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        simulateOfflineCheckbox = new JCheckBox();
+        simulateOfflineCheckbox.setText("Simulate offline?");
+        simulateOfflineCheckbox.setVisible(false);
+        panel5.add(simulateOfflineCheckbox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

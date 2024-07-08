@@ -51,6 +51,9 @@ public class StatsPluginSettings {
     @SerializedName("version")
     public String version;
 
+    @SerializedName("simulate no internet")
+    public boolean simulateNoInternet = false;
+
     public static StatsPluginSettings getInstance() {
         return instance;
     }
