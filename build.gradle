@@ -58,6 +58,8 @@ shadowJar {
         exclude 'com/google/common/collect/ImmutableSortedSetFauxverideShim.class'
         exclude 'META-INF/versions/9/module-info.class'
         exclude 'org/apache/commons/logging/impl/ServletContextCleaner.class'
+        exclude 'com/google/common/io/Closer$LoggingSuppressor.class'
+        exclude 'com/google/common/io/Closer$SuppressingSuppressor.class'
     }
     configurations = [project.configurations.shadow]
 }

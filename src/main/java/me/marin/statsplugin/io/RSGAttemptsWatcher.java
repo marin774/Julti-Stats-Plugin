@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Reads rsg-attempts.txt for reset counts, and then checks wpstateout.txt in the same instance.
+ * Reads Atum's rsg-attempts.txt for reset counts, and then checks wpstateout.txt in the same instance.
  * If the state is "wall", it calculates wall/break time.
  * <p>
  * This data is then used by {@link RecordsFolderWatcher}.

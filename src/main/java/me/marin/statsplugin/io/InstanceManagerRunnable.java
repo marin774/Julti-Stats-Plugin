@@ -6,6 +6,8 @@ import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.instance.MinecraftInstance;
 import xyz.duncanruns.julti.management.InstanceManager;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,6 +44,13 @@ public class InstanceManagerRunnable implements Runnable {
             String path = instance.getPath().toString();
             if (!instanceWatcherMap.containsKey(path)) {
                 // start a new watcher (this instance was just launched)
+                Path rsgAttemptsPath = Paths.get(instance.getPath().toString(), "config", "mcsr", "atum");
+
+                // Wait until the file exists (if they just set up or updated Atum OR if it's a misc instance, this won't exist)
+                if (!Files.exists(rsgAttemptsPath)) {
+                    continue;
+                }
+
                 RSGAttemptsWatcher watcher = new RSGAttemptsWatcher(Paths.get(instance.getPath().toString(), "config", "mcsr", "atum"));
                 Julti.log(Level.DEBUG, "Starting a new FileWatcher for instance: " + instance.getName() + "(" + instance.getPath().toString() + ")");
                 StatsPluginUtil.runAsync("rsg-attempts-watcher", watcher);
