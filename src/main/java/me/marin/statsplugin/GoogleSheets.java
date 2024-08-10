@@ -158,7 +158,7 @@ public class GoogleSheets {
     public void insertRecord(StatsRecord record) {
         StatsPluginUtil.runAsync("google-sheets", () -> {
             try {
-                if (StatsPluginSettings.getInstance().simulateNoInternet) throw new RuntimeException("simulating offline");
+                //if (StatsPluginSettings.getInstance().simulateNoInternet) throw new RuntimeException("simulating offline");
 
                 getRawDataSheet();
                 Integer sheetId = rawDataSheet.getProperties().getSheetId();

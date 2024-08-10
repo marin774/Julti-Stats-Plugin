@@ -12,6 +12,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.util.TimeZone;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,6 +89,11 @@ public class StatsPluginUtil {
 
     public static void runAsync(String threadName, Runnable runnable) {
         new Thread(runnable, threadName).start();
+    }
+
+    public static void runTimerAsync(Runnable runnable, int delayMs) {
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.scheduleAtFixedRate(runnable, 0, delayMs, TimeUnit.MILLISECONDS);
     }
 
     public static Instant dateTimeToInstant(String dateTime) {

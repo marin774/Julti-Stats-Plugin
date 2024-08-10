@@ -33,7 +33,7 @@ repositories {
 
 dependencies {
     // Choose Julti version: https://jitpack.io/#DuncanRuns/Julti
-    compileOnly 'com.github.DuncanRuns:Julti:v1.4.3'
+    compileOnly 'com.github.DuncanRuns:Julti:v1.5.3'
     // compile 'com.intellij:forms_rt:7.0.3'
 
     // Google Sheets API

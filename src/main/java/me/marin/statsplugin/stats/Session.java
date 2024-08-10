@@ -1,6 +1,7 @@
 package me.marin.statsplugin.stats;
 
 import me.marin.statsplugin.StatsPluginUtil;
+import me.marin.statsplugin.VersionUtil;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.util.ExceptionUtil;
@@ -19,6 +20,8 @@ import static me.marin.statsplugin.StatsPlugin.OBS_OVERLAY_TEMPLATE_PATH;
 public class Session {
 
     private final List<StatsRecord> records = new ArrayList<>();
+
+    public static final String SESSION_MARKER = "$J" + VersionUtil.CURRENT_VERSION;
 
     public static Session merge(Session older, Session newer) {
         Session session = new Session();

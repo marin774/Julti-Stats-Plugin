@@ -51,8 +51,9 @@ public class StatsPluginSettings {
     @SerializedName("version")
     public String version;
 
+    /*
     @SerializedName("simulate no internet")
-    public boolean simulateNoInternet = false;
+    public boolean simulateNoInternet = false;*/
 
     public static StatsPluginSettings getInstance() {
         return instance;
@@ -84,18 +85,4 @@ public class StatsPluginSettings {
         }
     }
 
-
-    @Override
-    public String toString() {
-        return "StatsPluginSettings{" +
-                "trackerEnabled=" + trackerEnabled +
-                ", sheetLink='" + sheetLink + '\'' +
-                ", recordsPath='" + recordsPath + '\'' +
-                ", breakThreshold=" + breakThreshold +
-                ", useSheets=" + useSheets +
-                ", deleteOldRecords=" + deleteOldRecords +
-                ", completedSetup=" + completedSetup +
-                ", version='" + version + '\'' +
-                '}';
-    }
 }

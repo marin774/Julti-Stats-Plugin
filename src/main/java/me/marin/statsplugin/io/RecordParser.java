@@ -91,13 +91,13 @@ public class RecordParser {
 
     public boolean hasObtainedWood() {
         if (!advKeys.contains("minecraft:recipes/misc/charcoal")) return false;
-        JsonObject criteria = getNestedJSONObject(adv, "minecraft:recipes/misc/charcoal", "criteria");
+        JsonObject criteria = getNestedJsonObject(adv, "minecraft:recipes/misc/charcoal", "criteria");
         return criteria.keySet().contains("has_log");
     }
 
     public Long getWoodObtainedTime() {
         if (!hasObtainedWood()) return null;
-        JsonObject hasLog = getNestedJSONObject(adv, "minecraft:recipes/misc/charcoal", "criteria", "has_log");
+        JsonObject hasLog = getNestedJsonObject(adv, "minecraft:recipes/misc/charcoal", "criteria", "has_log");
         long time = getLong(hasLog, "igt");
         Long LAN = getOpenLAN();
         if (LAN != null && LAN <= time) {
@@ -112,7 +112,7 @@ public class RecordParser {
 
     public Long getIronObtainedTime() {
         if (!hasObtainedIron()) return null;
-        JsonObject obtainedIron = getNestedJSONObject(adv, "minecraft:story/smelt_iron");
+        JsonObject obtainedIron = getNestedJsonObject(adv, "minecraft:story/smelt_iron");
         JsonElement timeElement = obtainedIron.get("igt");
         if (timeElement == null || timeElement.isJsonNull()) {
             return null;
@@ -128,12 +128,12 @@ public class RecordParser {
 
     public boolean hasObtainedPickaxe() {
         if (craftedKeys.contains("minecraft:diamond_pickaxe")) return true;
-        JsonObject ironPickaxe = getNestedJSONObject(adv, "minecraft:story/iron_tools", "criteria", "iron_pickaxe");
+        JsonObject ironPickaxe = getNestedJsonObject(adv, "minecraft:story/iron_tools", "criteria", "iron_pickaxe");
         return (ironPickaxe != null);
     }
 
     public Long getPickaxeTime() {
-        JsonObject ironPickaxe = getNestedJSONObject(adv, "minecraft:story/iron_tools", "criteria", "iron_pickaxe");
+        JsonObject ironPickaxe = getNestedJsonObject(adv, "minecraft:story/iron_tools", "criteria", "iron_pickaxe");
         if (ironPickaxe == null) return null;
         Long LAN = getOpenLAN();
         long time = ironPickaxe.get("igt").getAsLong();
@@ -154,7 +154,7 @@ public class RecordParser {
 
 
     public String getSpawnBiome() {
-        JsonObject criteria = getNestedJSONObject(adv, "minecraft:adventure/adventuring_time", "criteria");
+        JsonObject criteria = getNestedJsonObject(adv, "minecraft:adventure/adventuring_time", "criteria");
         if (criteria == null) return "Unknown";
         Set<String> visitedBiomes = criteria.keySet();
         for (String visitedBiome : visitedBiomes) {
@@ -218,7 +218,7 @@ public class RecordParser {
         // if visited ocean/beach biome in the first 3 minutes
         boolean visitedOceanOrBeach = false;
         if (adv != null) {
-            JsonObject criteria = getNestedJSONObject(adv, "minecraft:adventure/adventuring_time", "criteria");
+            JsonObject criteria = getNestedJsonObject(adv, "minecraft:adventure/adventuring_time", "criteria");
             if (criteria != null) {
                 Set<String> visitedBiomes = criteria.keySet();
                 for (String visitedBiome : visitedBiomes) {
@@ -243,7 +243,7 @@ public class RecordParser {
             // if cooked salmon or cod eaten OR if sand/gravel mined before iron acquired
             boolean buriedTreasure = usedKeys.contains("minecraft:cooked_salmon") || usedKeys.contains("minecraft:cooked_cod") ||
                     (advKeys.contains("minecraft:recipes/building_blocks/magenta_concrete_powder") &&
-                            getNestedJSONObject(adv, "minecraft:recipes/building_blocks/magenta_concrete_powder", "criteria", "has_the_recipe").get("igt").getAsLong() < getAdvancementIGT(adv, "minecraft:story/smelt_iron"));
+                            getNestedJsonObject(adv, "minecraft:recipes/building_blocks/magenta_concrete_powder", "criteria", "has_the_recipe").get("igt").getAsLong() < getAdvancementIGT(adv, "minecraft:story/smelt_iron"));
 
             // if wood obtained before iron
             boolean woodBeforeIron = (advKeys.contains("minecraft:story/smelt_iron") && advKeys.contains("minecraft:recipes/misc/charcoal") &&
@@ -352,7 +352,7 @@ public class RecordParser {
         return jsonObject.get(s).getAsLong();
     }
 
-    private static JsonObject getNestedJSONObject(JsonObject root, String... tree) {
+    private static JsonObject getNestedJsonObject(JsonObject root, String... tree) {
         for (String s : tree) {
             JsonElement element = root.get(s);
             if (element == null) return null;

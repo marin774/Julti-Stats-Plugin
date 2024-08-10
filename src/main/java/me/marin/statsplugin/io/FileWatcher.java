@@ -56,13 +56,13 @@ public abstract class FileWatcher implements Runnable {
                 key.reset();
             }
         } catch (IOException | InterruptedException e) {
-            Julti.log(Level.ERROR, "Error while reading from records folder:\n" + ExceptionUtil.toDetailedString(e));
+            Julti.log(Level.ERROR, "Error while reading from folder:\n" + ExceptionUtil.toDetailedString(e));
         } catch (ClosedWatchServiceException ignored) {
             /*
             Exception is thrown because WatchService#take is still waiting, but WatchService#close was called.
             It should be ignored.
             */
-            Julti.log(Level.DEBUG, "Record folder watcher was closed");
+            Julti.log(Level.DEBUG, "Folder watcher was closed");
         }
     }
 

@@ -191,7 +191,7 @@ public class SetupGUI extends JFrame {
                     Files.copy(credentialsFilePath, GOOGLE_SHEETS_CREDENTIALS_PATH, StandardCopyOption.REPLACE_EXISTING);
                 } catch (Exception e) {
                     Julti.log(Level.DEBUG, ExceptionUtil.toDetailedString(e));
-                    JOptionPane.showMessageDialog(null, "Looks like you deleted the credentials file before the setup was over. Please run the setup again.");
+                    JOptionPane.showMessageDialog(null, "Looks like the credentials file was deleted before the setup was completed. Please run the setup again.");
                     return;
                 }
 

@@ -68,11 +68,12 @@ public class StatsGUI extends JFrame {
         });
 
         // This is used for testing Google Sheets as if you or Google Sheets are down
+        /*
         simulateOfflineCheckbox.addActionListener(e -> {
             StatsPluginSettings settings = StatsPluginSettings.getInstance();
-            settings.simulateNoInternet = simulateOfflineCheckbox.isSelected();
+            //settings.simulateNoInternet = simulateOfflineCheckbox.isSelected();
             StatsPluginSettings.save();
-        });
+        });*/
 
         /*
         importCredentialsJsonButton.addActionListener(a -> {
@@ -239,8 +240,9 @@ public class StatsGUI extends JFrame {
 
         startANewSessionButton.addActionListener(a -> {
             CURRENT_SESSION = new Session();
+            CURRENT_SESSION.updateOverlay();
             Julti.log(Level.INFO, "Started a new session!");
-            JOptionPane.showMessageDialog(null, "New session will begin with your next run.");
+            JOptionPane.showMessageDialog(null, "New session started.");
         });
 
     }

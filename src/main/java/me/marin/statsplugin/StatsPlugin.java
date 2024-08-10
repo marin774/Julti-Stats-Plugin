@@ -3,10 +3,7 @@ package me.marin.statsplugin;
 import com.google.common.io.Resources;
 import me.marin.statsplugin.gui.OBSOverlayGUI;
 import me.marin.statsplugin.gui.StatsGUI;
-import me.marin.statsplugin.io.OldRecordBopperRunnable;
-import me.marin.statsplugin.io.RecordsFolderWatcher;
-import me.marin.statsplugin.io.StatsFileIO;
-import me.marin.statsplugin.io.StatsPluginSettings;
+import me.marin.statsplugin.io.*;
 import me.marin.statsplugin.stats.Session;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
@@ -41,7 +38,7 @@ public class StatsPlugin implements PluginInitializer {
     public static StatsGUI statsGUI;
     public static GoogleSheets googleSheets;
 
-    public static boolean isTrackerRunning = false;
+    private static final int THREE_HOURS_MS = 1000 * 60 * 60 * 3;
 
     /**
      * Used for dev testing only.
@@ -68,7 +65,7 @@ public class StatsPlugin implements PluginInitializer {
                 long timeSince = Math.abs(Duration.between(Instant.now(), StatsPluginUtil.dateTimeToInstant(dateTime)).toMillis());
                 Julti.log(Level.DEBUG, "Last record in previous session: " + dateTime + "(" + timeSince + "ms ago)");
 
-                if (timeSince < 1000 * 60 * 60 * 3) {
+                if (timeSince < THREE_HOURS_MS) {
                     // less than 3 hours since previous session, merge
                     CURRENT_SESSION = previousSession;
                     Julti.log(Level.INFO, "Continuing calculating stats from previous session!");
@@ -97,7 +94,7 @@ public class StatsPlugin implements PluginInitializer {
                 return;
             }
             StatsPluginUtil.runAsync("records-folder-watcher", new RecordsFolderWatcher(recordsPath));
-
+            StatsPluginUtil.runTimerAsync(new InstanceManagerRunnable(), 1000);
         });
     }
 

@@ -4,14 +4,18 @@ import com.google.gson.JsonObject;
 import me.marin.statsplugin.StatsPlugin;
 import me.marin.statsplugin.StatsPluginUtil;
 import me.marin.statsplugin.VersionUtil;
+import me.marin.statsplugin.stats.Session;
 import me.marin.statsplugin.stats.StatsRecord;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
-import xyz.duncanruns.julti.JultiOptions;
 import xyz.duncanruns.julti.management.ActiveWindowManager;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -28,8 +32,6 @@ public class RecordsFolderWatcher extends FileWatcher {
             .toFormatter()
             .withZone(ZoneId.systemDefault());
 
-    private static final String SESSION_MARKER = "$J" + VersionUtil.CURRENT_VERSION;
-
     private int wallResetsSincePrev = 0;
     private int splitlessResets = 0;
     private long RTASincePrev = 0;
@@ -37,8 +39,6 @@ public class RecordsFolderWatcher extends FileWatcher {
     private long wallTimeSincePrev = 0;
 
     private String RTADistribution = "";
-
-    private long lastActionMillis = 0;
 
     // Completed runs get updated on completion and on reset, which means they would get tracked twice - this prevents that.
     private final List<String> completedRunsRecordIds = new ArrayList<>();
@@ -52,15 +52,13 @@ public class RecordsFolderWatcher extends FileWatcher {
         Julti.log(Level.DEBUG, "Records folder watcher is running...");
     }
 
-    /**
-     * Record files get updated on world load start, completion and on reset.
-     */
     @Override
     protected void handleFileUpdated(File file) {
+        Julti.log(Level.DEBUG, "records> " + file.getName());
         if (!StatsPluginSettings.getInstance().trackerEnabled) {
             return;
         }
-        if (JultiOptions.getJultiOptions().resetStyle.equals("Benchmark")) {
+        if (file.getName().startsWith("Benchmark Reset #")) {
             return;
         }
         if (completedRunsRecordIds.contains(file.getName()) || mostRecentRecordIds.contains(file.getName())) {
@@ -80,29 +78,32 @@ public class RecordsFolderWatcher extends FileWatcher {
             return;
         }
 
-        long now = System.currentTimeMillis();
+        Julti.log(Level.DEBUG, "records> it is rsg");
+
+
         long finalRTA = recordJSON.get("final_rta").getAsLong();
         Long LAN = recordParser.getOpenLAN();
         if (LAN != null && LAN <= finalRTA) {
             finalRTA = LAN;
         }
 
-        // Calculate wall breaks
-        if (lastActionMillis > 0) {
-            long delta = now - lastActionMillis - finalRTA;
-            if (delta > 0 && ActiveWindowManager.isWallActive()) {
-                if (delta > StatsPluginSettings.getInstance().breakThreshold * 1000L) {
-                    breakRTASincePrev += delta;
-                } else {
-                    wallTimeSincePrev += delta;
-                }
-            }
+        Julti.log(Level.DEBUG, "records> finalRTA " + finalRTA);
+
+
+        // wall time calculation
+        for (RSGAttemptsWatcher attemptsWatcher : InstanceManagerRunnable.instanceWatcherMap.values()) {
+            breakRTASincePrev += attemptsWatcher.getBreakRTASincePrev();
+            wallResetsSincePrev += attemptsWatcher.getWallResetsSincePrev();
+            wallTimeSincePrev += attemptsWatcher.getWallTimeSincePrev();
+            attemptsWatcher.reset();
         }
 
-        this.lastActionMillis = now;
+        Julti.log(Level.DEBUG, "records> read from attempts watcher");
+
 
         if (finalRTA == 0) {
-            wallResetsSincePrev++;
+            // wallResetsSincePrev++;
+            Julti.log(Level.DEBUG, "final rta = 0, skipping");
             return;
         }
 
@@ -144,7 +145,7 @@ public class RecordsFolderWatcher extends FileWatcher {
                 Math.max(0, RTASincePrev),
                 breakRTASincePrev,
                 wallTimeSincePrev,
-                StatsPlugin.CURRENT_SESSION.isEmpty() ? SESSION_MARKER : "",
+                StatsPlugin.CURRENT_SESSION.isEmpty() ? Session.SESSION_MARKER : "",
                 RTADistribution
         );
 
