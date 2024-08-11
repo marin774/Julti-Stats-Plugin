@@ -32,22 +32,32 @@ public class RSGAttemptsWatcher extends FileWatcher {
         previousAtumResets = getAtumResets();
     }
 
-    private String getWpStateout() {
-        try {
-            return new String(Files.readAllBytes(wpStateoutPath), StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            return "null";
+    private String read(Path path) {
+        int attempts = 0;
+        while (true) {
+            try {
+                byte[] text = Files.readAllBytes(path);
+                if (text.length > 0) {
+                    return new String(text, StandardCharsets.UTF_8);
+                }
+                Thread.sleep(10);
+                if (attempts++ > 50) {
+                    throw new IOException("file is still empty after 50 attempts.");
+                }
+            } catch (IOException | InterruptedException e) {
+                Julti.log(Level.DEBUG, "Could not read " + path.getFileName() + ":\n" + ExceptionUtil.toDetailedString(e));
+            }
         }
+    }
+
+    private String getWpStateout() {
+        return read(wpStateoutPath);
     }
 
     private long getAtumResets() {
         try {
             Path path = Paths.get(file.toPath().toString(), RSG_ATTEMPTS);
-            String resetString = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
-            return Long.parseLong(resetString);
-        } catch (IOException e) {
-            Julti.log(Level.ERROR, "Could not read rsg-attempts.txt:\n" + ExceptionUtil.toDetailedString(e));
-            return -1;
+            return Long.parseLong(read(path));
         } catch (NumberFormatException e) {
             Julti.log(Level.ERROR, "Could not parse number in rsg-attempts.txt:\n" + ExceptionUtil.toDetailedString(e));
             return -1;
@@ -66,16 +76,17 @@ public class RSGAttemptsWatcher extends FileWatcher {
      * Important: This method is called after each world is created, and considering that
      *  SeedQueue could be creating worlds in the background for seconds after
      *  players reset a world, *wall time and break time can not be fully accurate*.
-     * <p>
-     * TODO: check when hotkey was pressed instead of relying on this file?
      */
     @Override
     protected void handleFileUpdated(File file) {
+        if (!StatsPluginSettings.getInstance().trackerEnabled) {
+            return;
+        }
         if (!file.getName().equals(RSG_ATTEMPTS)) {
             return;
         }
         String state = getWpStateout();
-        boolean isWallActive = state.equals("wall") && ActiveWindowManager.isMinecraftActive();
+        boolean isWallActive = "wall".equals(state) && ActiveWindowManager.isMinecraftActive();
 
         long atumResets = getAtumResets();
         if (atumResets < 0 || atumResets == previousAtumResets) {

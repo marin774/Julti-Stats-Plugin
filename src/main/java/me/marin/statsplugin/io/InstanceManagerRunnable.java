@@ -53,7 +53,7 @@ public class InstanceManagerRunnable implements Runnable {
                 Path atumDirectory = Paths.get(instance.getPath().toString(), "config", "mcsr", "atum");
                 Path wpStateoutPath = Paths.get(instance.getPath().toString(), "wpstateout.txt");
 
-                Julti.log(Level.DEBUG, "Starting a new FileWatcher for instance: " + instance.getName() + "(" + instance.getPath().toString() + ")");
+                Julti.log(Level.DEBUG, "Starting a new FileWatcher for instance: " + instance.getName() + " (" + instance.getPath().toString() + ")");
 
                 RSGAttemptsWatcher watcher = new RSGAttemptsWatcher(atumDirectory, wpStateoutPath);
                 StatsPluginUtil.runAsync("rsg-attempts-watcher", watcher);

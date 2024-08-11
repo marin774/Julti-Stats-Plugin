@@ -25,22 +25,15 @@ public abstract class FileWatcher implements Runnable {
 
     protected final File file;
 
-    private WatchService watcher;
     private WatchKey watchKey;
 
     public FileWatcher(File file) {
         this.file = file;
-
-        try {
-            watcher = FileSystems.getDefault().newWatchService();
-        } catch (IOException e) {
-            Julti.log(Level.ERROR, "Could not start FileWatcher:\n" + ExceptionUtil.toDetailedString(e));
-        }
     }
 
     @Override
     public void run() {
-        try {
+        try (WatchService watcher = FileSystems.getDefault().newWatchService()) {
             this.file.toPath().register(watcher, ENTRY_MODIFY);
 
             do {
