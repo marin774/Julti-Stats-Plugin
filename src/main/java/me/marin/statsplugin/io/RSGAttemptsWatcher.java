@@ -22,12 +22,10 @@ import java.nio.file.Paths;
 public class RSGAttemptsWatcher extends FileWatcher {
 
     private final static String RSG_ATTEMPTS = "rsg-attempts.txt";
-    private final WinDef.HWND instanceHandle;
     private final Path wpStateoutPath;
 
-    public RSGAttemptsWatcher(WinDef.HWND instanceHandle, Path atumDirectory, Path wpStateoutPath) {
+    public RSGAttemptsWatcher(Path atumDirectory, Path wpStateoutPath) {
         super(atumDirectory.toFile());
-        this.instanceHandle = instanceHandle;
         this.wpStateoutPath = wpStateoutPath;
 
         Julti.log(Level.DEBUG, "rsg-attempts.txt watcher is running...");
@@ -77,7 +75,7 @@ public class RSGAttemptsWatcher extends FileWatcher {
             return;
         }
         String state = getWpStateout();
-        boolean isWallActive = state.equals("wall") && ActiveWindowManager.isWindowActive(instanceHandle);
+        boolean isWallActive = state.equals("wall") && ActiveWindowManager.isMinecraftActive();
 
         long atumResets = getAtumResets();
         if (atumResets < 0 || atumResets == previousAtumResets) {

@@ -55,7 +55,7 @@ public class InstanceManagerRunnable implements Runnable {
 
                 Julti.log(Level.DEBUG, "Starting a new FileWatcher for instance: " + instance.getName() + "(" + instance.getPath().toString() + ")");
 
-                RSGAttemptsWatcher watcher = new RSGAttemptsWatcher(instance.getHwnd(), atumDirectory, wpStateoutPath);
+                RSGAttemptsWatcher watcher = new RSGAttemptsWatcher(atumDirectory, wpStateoutPath);
                 StatsPluginUtil.runAsync("rsg-attempts-watcher", watcher);
                 instanceWatcherMap.put(path, watcher);
             }
