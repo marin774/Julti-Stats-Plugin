@@ -1,15 +1,13 @@
 package me.marin.statsplugin.io;
 
-import com.sun.jna.platform.win32.WinDef;
+import me.marin.statsplugin.FileStillEmptyException;
+import me.marin.statsplugin.StatsPluginUtil;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.management.ActiveWindowManager;
 import xyz.duncanruns.julti.util.ExceptionUtil;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -25,41 +23,36 @@ public class RSGAttemptsWatcher extends FileWatcher {
     private final Path wpStateoutPath;
 
     public RSGAttemptsWatcher(Path atumDirectory, Path wpStateoutPath) {
-        super(atumDirectory.toFile());
+        super("rsg-attempts-watcher", atumDirectory.toFile());
         this.wpStateoutPath = wpStateoutPath;
 
         Julti.log(Level.DEBUG, "rsg-attempts.txt watcher is running...");
         previousAtumResets = getAtumResets();
     }
 
-    private String read(Path path) {
-        int attempts = 0;
-        while (true) {
-            try {
-                byte[] text = Files.readAllBytes(path);
-                if (text.length > 0) {
-                    return new String(text, StandardCharsets.UTF_8);
-                }
-                Thread.sleep(10);
-                if (attempts++ > 50) {
-                    throw new IOException("file is still empty after 50 attempts.");
-                }
-            } catch (IOException | InterruptedException e) {
-                Julti.log(Level.DEBUG, "Could not read " + path.getFileName() + ":\n" + ExceptionUtil.toDetailedString(e));
-            }
+    private String getWpStateout() {
+        try {
+            return StatsPluginUtil.readFile(wpStateoutPath);
+        } catch (FileStillEmptyException e) {
+            Julti.log(Level.ERROR, "wpstateout.txt is empty?\n" + ExceptionUtil.toDetailedString(e));
+            return null;
         }
     }
 
-    private String getWpStateout() {
-        return read(wpStateoutPath);
-    }
-
     private long getAtumResets() {
+        Path path = Paths.get(file.toPath().toString(), RSG_ATTEMPTS);
+
+        String resetString;
         try {
-            Path path = Paths.get(file.toPath().toString(), RSG_ATTEMPTS);
-            return Long.parseLong(read(path));
+            resetString = StatsPluginUtil.readFile(path);
+        } catch (FileStillEmptyException e) {
+            Julti.log(Level.ERROR, "rsg-attempts.txt is empty?\n" + ExceptionUtil.toDetailedString(e));
+            return -1;
+        }
+        try {
+            return Long.parseLong(resetString);
         } catch (NumberFormatException e) {
-            Julti.log(Level.ERROR, "Could not parse number in rsg-attempts.txt:\n" + ExceptionUtil.toDetailedString(e));
+            Julti.log(Level.ERROR, "invalid number in rsg-attempts.txt '" + resetString + "':\n" + ExceptionUtil.toDetailedString(e));
             return -1;
         }
     }

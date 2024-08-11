@@ -42,7 +42,7 @@ public class RecordsFolderWatcher extends FileWatcher {
     private final List<String> mostRecentRecordIds = new ArrayList<>();
 
     public RecordsFolderWatcher(Path path) {
-        super(path.toFile());
+        super("records-folder-watcher", path.toFile());
         Julti.log(Level.DEBUG, "Records folder watcher is running...");
     }
 
@@ -66,7 +66,7 @@ public class RecordsFolderWatcher extends FileWatcher {
             return;
         }
 
-        RecordParser recordParser = new RecordParser(file);
+        RecordParser recordParser = new RecordParser(recordJSON);
         if (!recordParser.validateRSG()) {
             Julti.log(Level.DEBUG, "Not saving run because it's not rsg.");
             return;

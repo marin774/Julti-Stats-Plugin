@@ -23,11 +23,13 @@ public abstract class FileWatcher implements Runnable {
      */
     private static final int DUPLICATE_UPDATE_PREVENTION_MS = 5;
 
+    protected final String name;
     protected final File file;
 
     private WatchKey watchKey;
 
-    public FileWatcher(File file) {
+    public FileWatcher(String name, File file) {
+        this.name = name;
         this.file = file;
     }
 
@@ -48,7 +50,11 @@ public abstract class FileWatcher implements Runnable {
 
                     if (event.kind() == ENTRY_MODIFY) {
                         if (updatedFile.length() > 0) {
-                            handleFileUpdated(updatedFile);
+                            try {
+                                handleFileUpdated(updatedFile);
+                            } catch (Exception e) {
+                                Julti.log(Level.ERROR, "Unhandled exception in '" + this.name + "':\n" + ExceptionUtil.toDetailedString(e));
+                            }
                         }
                     }
                 }
@@ -56,7 +62,7 @@ public abstract class FileWatcher implements Runnable {
         } catch (IOException | InterruptedException e) {
             Julti.log(Level.ERROR, "Error while reading:\n" + ExceptionUtil.toDetailedString(e));
         } catch (Exception e) {
-            Julti.log(Level.DEBUG, "Unknown exception while reading:\n" + ExceptionUtil.toDetailedString(e));
+            Julti.log(Level.ERROR, "Unknown exception while reading:\n" + ExceptionUtil.toDetailedString(e));
         }
         Julti.log(Level.DEBUG, "FileWatcher was closed");
     }

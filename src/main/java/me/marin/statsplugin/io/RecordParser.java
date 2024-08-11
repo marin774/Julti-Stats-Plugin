@@ -29,8 +29,8 @@ public class RecordParser {
     private final JsonObject pickedUp;
     private final Set<String> pickedUpKeys;
 
-    public RecordParser(File recordFile) {
-        this.record = StatsPluginUtil.readJSON(recordFile);
+    public RecordParser(JsonObject recordJson) {
+        this.record = recordJson;
         this.adv = this.record.keySet().contains("advancements") ? this.record.get("advancements").getAsJsonObject() : null;
         this.advKeys = adv != null ? adv.keySet() : Collections.emptySet();
 

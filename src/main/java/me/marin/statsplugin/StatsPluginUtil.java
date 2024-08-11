@@ -2,11 +2,16 @@ package me.marin.statsplugin;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonReader;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
+import xyz.duncanruns.julti.Julti;
+import xyz.duncanruns.julti.util.ExceptionUtil;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -23,10 +28,16 @@ import static me.marin.statsplugin.io.RecordsFolderWatcher.DATETIME_FORMATTER;
 public class StatsPluginUtil {
 
     public static JsonObject readJSON(File file) {
-        try (JsonReader reader = new JsonReader(new FileReader(file))) {
-            return new Gson().fromJson(reader, JsonObject.class);
-        } catch (Exception ignored) {}
-        return null;
+        try {
+            String json = StatsPluginUtil.readFile(file.toPath());
+            return new Gson().fromJson(json, JsonObject.class);
+        } catch (FileStillEmptyException e) {
+            Julti.log(Level.ERROR, file.getName() + " is empty?\n" + ExceptionUtil.toDetailedString(e));
+            return null;
+        } catch (Exception e) {
+            Julti.log(Level.ERROR, "Could not read JSON file '" + file.getName() + "':\n" + ExceptionUtil.toDetailedString(e));
+            return null;
+        }
     }
 
     public static String extractGoogleSheetsID(String url) {
@@ -109,6 +120,30 @@ public class StatsPluginUtil {
         }
 
         return ldt.atZone(DATETIME_FORMATTER.getZone()).toInstant();
+    }
+
+    /**
+     * Attempts to read a file 50 times with 10ms delay in between.
+     * This is done to prevent some rare race conditions where file is being modified while it's trying to be read, which returns an empty string.
+     * @param path  Path to the file
+     * @return File contents in a string, UTF_8 charset
+     * @throws FileStillEmptyException If the file is still empty after 50 attempts.
+     */
+    public static String readFile(Path path) throws FileStillEmptyException {
+        int attempts = 0;
+        while (attempts < 50) {
+            try {
+                byte[] text = Files.readAllBytes(path);
+                if (text.length > 0) {
+                    return new String(text, StandardCharsets.UTF_8);
+                }
+                Thread.sleep(10);
+                attempts++;
+            } catch (IOException | InterruptedException e) {
+                Julti.log(Level.DEBUG, "Could not read " + path.getFileName() + ":\n" + ExceptionUtil.toDetailedString(e));
+            }
+        }
+        throw new FileStillEmptyException("file is still empty after 50 attempts.");
     }
 
 
