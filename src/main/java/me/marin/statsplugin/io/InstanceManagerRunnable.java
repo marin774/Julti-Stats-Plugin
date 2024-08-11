@@ -29,7 +29,6 @@ public class InstanceManagerRunnable implements Runnable {
     @Override
     public void run() {
         HashSet<String> currentActiveInstancePaths = InstanceManager.getInstanceManager().getInstances().stream().map(i -> i.getPath().toString()).collect(Collectors.toCollection(HashSet::new));
-
         HashSet<String> closedInstancePaths = new HashSet<>(previousActiveInstancePaths);
         closedInstancePaths.removeAll(currentActiveInstancePaths);
 
@@ -43,16 +42,20 @@ public class InstanceManagerRunnable implements Runnable {
         for (MinecraftInstance instance : InstanceManager.getInstanceManager().getInstances()) {
             String path = instance.getPath().toString();
             if (!instanceWatcherMap.containsKey(path)) {
-                // start a new watcher (this instance was just launched)
-                Path rsgAttemptsPath = Paths.get(instance.getPath().toString(), "config", "mcsr", "atum");
+                Path rsgAttemptsPath = Paths.get(instance.getPath().toString(), "config", "mcsr", "atum", "rsg-attempts.txt");
 
                 // Wait until the file exists (if they just set up or updated Atum OR if it's a misc instance, this won't exist)
                 if (!Files.exists(rsgAttemptsPath)) {
                     continue;
                 }
 
-                RSGAttemptsWatcher watcher = new RSGAttemptsWatcher(Paths.get(instance.getPath().toString(), "config", "mcsr", "atum"));
+                // start a new watcher
+                Path atumDirectory = Paths.get(instance.getPath().toString(), "config", "mcsr", "atum");
+                Path wpStateoutPath = Paths.get(instance.getPath().toString(), "wpstateout.txt");
+
                 Julti.log(Level.DEBUG, "Starting a new FileWatcher for instance: " + instance.getName() + "(" + instance.getPath().toString() + ")");
+
+                RSGAttemptsWatcher watcher = new RSGAttemptsWatcher(instance.getHwnd(), atumDirectory, wpStateoutPath);
                 StatsPluginUtil.runAsync("rsg-attempts-watcher", watcher);
                 instanceWatcherMap.put(path, watcher);
             }

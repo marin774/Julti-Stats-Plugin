@@ -1,7 +1,9 @@
 package me.marin.statsplugin.io;
 
+import com.sun.jna.platform.win32.WinDef;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
+import xyz.duncanruns.julti.management.ActiveWindowManager;
 import xyz.duncanruns.julti.util.ExceptionUtil;
 
 import java.io.File;
@@ -19,16 +21,22 @@ import java.nio.file.Paths;
  */
 public class RSGAttemptsWatcher extends FileWatcher {
 
-    public RSGAttemptsWatcher(Path path) {
-        super(path.toFile());
+    private final static String RSG_ATTEMPTS = "rsg-attempts.txt";
+    private final WinDef.HWND instanceHandle;
+    private final Path wpStateoutPath;
+
+    public RSGAttemptsWatcher(WinDef.HWND instanceHandle, Path atumDirectory, Path wpStateoutPath) {
+        super(atumDirectory.toFile());
+        this.instanceHandle = instanceHandle;
+        this.wpStateoutPath = wpStateoutPath;
+
         Julti.log(Level.DEBUG, "rsg-attempts.txt watcher is running...");
         previousAtumResets = getAtumResets();
     }
 
     private String getWpStateout() {
         try {
-            Path path = Paths.get(file.getParentFile().getParentFile().getParentFile().toPath().toString(), "wpstateout.txt");
-            return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+            return new String(Files.readAllBytes(wpStateoutPath), StandardCharsets.UTF_8);
         } catch (Exception e) {
             return "null";
         }
@@ -36,9 +44,14 @@ public class RSGAttemptsWatcher extends FileWatcher {
 
     private long getAtumResets() {
         try {
-            return Long.parseLong(new String(Files.readAllBytes(Paths.get(file.toPath().toString(), "rsg-attempts.txt")), StandardCharsets.UTF_8));
-        } catch (IOException | NumberFormatException e) {
-            Julti.log(Level.ERROR, "Could not read atum rsg-attempts.txt:\n" + ExceptionUtil.toDetailedString(e));
+            Path path = Paths.get(file.toPath().toString(), RSG_ATTEMPTS);
+            String resetString = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+            return Long.parseLong(resetString);
+        } catch (IOException e) {
+            Julti.log(Level.ERROR, "Could not read rsg-attempts.txt:\n" + ExceptionUtil.toDetailedString(e));
+            return -1;
+        } catch (NumberFormatException e) {
+            Julti.log(Level.ERROR, "Could not parse number in rsg-attempts.txt:\n" + ExceptionUtil.toDetailedString(e));
             return -1;
         }
     }
@@ -51,13 +64,20 @@ public class RSGAttemptsWatcher extends FileWatcher {
 
     private long previousAtumResets = 0;
 
+    /**
+     * Important: This method is called after each world is created, and considering that
+     *  SeedQueue could be creating worlds in the background for seconds after
+     *  players reset a world, *wall time and break time can not be fully accurate*.
+     * <p>
+     * TODO: check when hotkey was pressed instead of relying on this file?
+     */
     @Override
     protected void handleFileUpdated(File file) {
-        if (!file.getName().equals("rsg-attempts.txt")) {
+        if (!file.getName().equals(RSG_ATTEMPTS)) {
             return;
         }
         String state = getWpStateout();
-        boolean isWallActive = state.equals("wall");
+        boolean isWallActive = state.equals("wall") && ActiveWindowManager.isWindowActive(instanceHandle);
 
         long atumResets = getAtumResets();
         if (atumResets < 0 || atumResets == previousAtumResets) {
@@ -83,7 +103,7 @@ public class RSGAttemptsWatcher extends FileWatcher {
                     Julti.log(Level.DEBUG, "Break RTA +" + delta + "ms (" + breakRTASincePrev + "ms total).");
                 } else {
                     wallTimeSincePrev += delta;
-                    Julti.log(Level.DEBUG, "Walltime since prev +" + delta + "ms (" + wallTimeSincePrev + "ms total).");
+                    Julti.log(Level.DEBUG, "Wall time since prev. +" + delta + "ms (" + wallTimeSincePrev + "ms total).");
                 }
             }
         }

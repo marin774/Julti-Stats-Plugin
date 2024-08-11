@@ -10,19 +10,26 @@ import java.nio.file.*;
 
 import static java.nio.file.StandardWatchEventKinds.*;
 
+/**
+ * Works with single files and directories.
+ * Directories will receive updates when a file in the directory has been modified.
+ */
 public abstract class FileWatcher implements Runnable {
 
-    protected final File file;
-    private final boolean isDirectory;
+    /**
+     * Some programs will fire two ENTRY_MODIFY events without the file actually changing, and
+     * <a href="https://stackoverflow.com/questions/16777869/java-7-watchservice-ignoring-multiple-occurrences-of-the-same-event/25221600#25221600">this</a>
+     * post explains it and addresses it, even though it's not the perfect solution.
+     */
+    private static final int DUPLICATE_UPDATE_PREVENTION_MS = 5;
 
-    protected final File parentDirectory;
+    protected final File file;
 
     private WatchService watcher;
+    private WatchKey watchKey;
 
     public FileWatcher(File file) {
         this.file = file;
-        this.isDirectory = file.isDirectory();
-        this.parentDirectory = file.getParentFile();
 
         try {
             watcher = FileSystems.getDefault().newWatchService();
@@ -34,46 +41,37 @@ public abstract class FileWatcher implements Runnable {
     @Override
     public void run() {
         try {
-            File directory = isDirectory ? this.file : this.file.getParentFile();
-            directory.toPath().register(watcher, ENTRY_MODIFY, ENTRY_CREATE);
+            this.file.toPath().register(watcher, ENTRY_MODIFY);
 
-            //noinspection InfiniteLoopStatement
-            while (true) {
-                WatchKey key = watcher.take();
-                for (WatchEvent<?> event : key.pollEvents()) {
+            do {
+                this.watchKey = watcher.take();
+
+                Thread.sleep(DUPLICATE_UPDATE_PREVENTION_MS); // explained above
+
+                for (WatchEvent<?> event : watchKey.pollEvents()) {
                     @SuppressWarnings("unchecked")
                     WatchEvent<Path> ev = (WatchEvent<Path>) event;
-                    File file = new File(directory, ev.context().toString());
+                    File updatedFile = new File(this.file, ev.context().toString());
 
                     if (event.kind() == ENTRY_MODIFY) {
-                        if (file.length() > 0) {
-                            handleFileUpdated(file);
+                        if (updatedFile.length() > 0) {
+                            handleFileUpdated(updatedFile);
                         }
-                    } else {
-                        handleFileCreated(file);
                     }
                 }
-                key.reset();
-            }
+            } while (this.watchKey.reset());
         } catch (IOException | InterruptedException e) {
-            Julti.log(Level.ERROR, "Error while reading from folder:\n" + ExceptionUtil.toDetailedString(e));
-        } catch (ClosedWatchServiceException ignored) {
-            /*
-            Exception is thrown because WatchService#take is still waiting, but WatchService#close was called.
-            It should be ignored.
-            */
-            Julti.log(Level.DEBUG, "Folder watcher was closed");
+            Julti.log(Level.ERROR, "Error while reading:\n" + ExceptionUtil.toDetailedString(e));
+        } catch (Exception e) {
+            Julti.log(Level.DEBUG, "Unknown exception while reading:\n" + ExceptionUtil.toDetailedString(e));
         }
+        Julti.log(Level.DEBUG, "FileWatcher was closed");
     }
 
     protected abstract void handleFileUpdated(File file);
-    protected abstract void handleFileCreated(File file);
+    protected abstract void handleFileCreated(File file); //currently not used
     protected void stop() {
-        try {
-            watcher.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        watchKey.cancel();
     }
 
 }

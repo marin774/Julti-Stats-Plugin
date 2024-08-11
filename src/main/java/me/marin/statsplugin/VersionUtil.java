@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 
 public class VersionUtil {
 
-    public static final Version CURRENT_VERSION = new Version(0, 5, 0);
+    public static final Version CURRENT_VERSION = new Version(0, 5, 1);
 
     public static Version version(String version) {
         String[] parts = version.split("\\.");

@@ -3,19 +3,13 @@ package me.marin.statsplugin.io;
 import com.google.gson.JsonObject;
 import me.marin.statsplugin.StatsPlugin;
 import me.marin.statsplugin.StatsPluginUtil;
-import me.marin.statsplugin.VersionUtil;
 import me.marin.statsplugin.stats.Session;
 import me.marin.statsplugin.stats.StatsRecord;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
-import xyz.duncanruns.julti.management.ActiveWindowManager;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -100,11 +94,15 @@ public class RecordsFolderWatcher extends FileWatcher {
 
         Julti.log(Level.DEBUG, "records> read from attempts watcher");
 
-
         if (finalRTA == 0) {
             // wallResetsSincePrev++;
             Julti.log(Level.DEBUG, "final rta = 0, skipping");
             return;
+        }
+
+        mostRecentRecordIds.add(file.getName());
+        if (mostRecentRecordIds.size() > 5) {
+            mostRecentRecordIds.remove(0);
         }
 
         RTADistribution += finalRTA/1000 + "$";
@@ -151,10 +149,6 @@ public class RecordsFolderWatcher extends FileWatcher {
 
         if (recordParser.isCompleted()) {
             completedRunsRecordIds.add(file.getName());
-        }
-        mostRecentRecordIds.add(file.getName());
-        if (mostRecentRecordIds.size() > 5) {
-            mostRecentRecordIds.remove(0);
         }
 
         StatsPlugin.CURRENT_SESSION.addRun(csvRecord, true);
