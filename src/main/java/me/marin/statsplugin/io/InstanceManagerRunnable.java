@@ -28,9 +28,18 @@ public class InstanceManagerRunnable implements Runnable {
 
     @Override
     public void run() {
-        HashSet<String> currentActiveInstancePaths = InstanceManager.getInstanceManager().getInstances().stream().map(i -> i.getPath().toString()).collect(Collectors.toCollection(HashSet::new));
+        HashSet<String> currentActiveInstancePaths = InstanceManager.getInstanceManager().getInstances().stream()
+                .filter(i -> !i.isWindowMarkedMissing())
+                .map(i -> i.getPath().toString())
+                .collect(Collectors.toCollection(HashSet::new));
+
         HashSet<String> closedInstancePaths = new HashSet<>(previousActiveInstancePaths);
         closedInstancePaths.removeAll(currentActiveInstancePaths);
+        if (currentActiveInstancePaths.size() != previousActiveInstancePaths.size()) {
+            Julti.log(Level.DEBUG, "previousActiveInstancePaths: " + previousActiveInstancePaths);
+            Julti.log(Level.DEBUG, "currentActiveInstancePaths: " + currentActiveInstancePaths);
+            Julti.log(Level.DEBUG, "closedInstancePaths: " + closedInstancePaths);
+        }
 
         for (String closedInstancePath : closedInstancePaths) {
             // close old watchers (this instance was just closed)
@@ -41,6 +50,9 @@ public class InstanceManagerRunnable implements Runnable {
 
         for (MinecraftInstance instance : InstanceManager.getInstanceManager().getInstances()) {
             String path = instance.getPath().toString();
+            if (!currentActiveInstancePaths.contains(path)) {
+                continue;
+            }
             if (!instanceWatcherMap.containsKey(path)) {
                 Path rsgAttemptsPath = Paths.get(instance.getPath().toString(), "config", "mcsr", "atum", "rsg-attempts.txt");
 

@@ -26,7 +26,7 @@ public abstract class FileWatcher implements Runnable {
     protected final String name;
     protected final File file;
 
-    private WatchKey watchKey;
+    private WatchService watchService;
 
     public FileWatcher(String name, File file) {
         this.name = name;
@@ -35,11 +35,18 @@ public abstract class FileWatcher implements Runnable {
 
     @Override
     public void run() {
-        try (WatchService watcher = FileSystems.getDefault().newWatchService()) {
-            this.file.toPath().register(watcher, ENTRY_MODIFY);
+        try {
+            watchService = FileSystems.getDefault().newWatchService();
+        } catch (IOException e) {
+            Julti.log(Level.ERROR, "Could not start WatchService:\n" + ExceptionUtil.toDetailedString(e));
+            return;
+        }
+        try {
+            this.file.toPath().register(watchService, ENTRY_MODIFY);
 
+            WatchKey watchKey;
             do {
-                this.watchKey = watcher.take();
+                watchKey = watchService.take();
 
                 Thread.sleep(DUPLICATE_UPDATE_PREVENTION_MS); // explained above
 
@@ -58,7 +65,9 @@ public abstract class FileWatcher implements Runnable {
                         }
                     }
                 }
-            } while (this.watchKey.reset());
+            } while (watchKey.reset());
+        } catch (ClosedWatchServiceException ignored) {
+            // when stop method gets called, ClosedWatchServiceException is thrown, and file watcher should stop.
         } catch (IOException | InterruptedException e) {
             Julti.log(Level.ERROR, "Error while reading:\n" + ExceptionUtil.toDetailedString(e));
         } catch (Exception e) {
@@ -70,7 +79,11 @@ public abstract class FileWatcher implements Runnable {
     protected abstract void handleFileUpdated(File file);
     protected abstract void handleFileCreated(File file); //currently not used
     protected void stop() {
-        watchKey.cancel();
+        try {
+            watchService.close();
+        } catch (IOException e) {
+            Julti.log(Level.ERROR, "Could not stop WatchService:\n" + ExceptionUtil.toDetailedString(e));
+        }
     }
 
 }
