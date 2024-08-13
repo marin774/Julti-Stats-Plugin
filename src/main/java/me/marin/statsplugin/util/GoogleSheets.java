@@ -1,4 +1,4 @@
-package me.marin.statsplugin;
+package me.marin.statsplugin.util;
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpRequestInitializer;

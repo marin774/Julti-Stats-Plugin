@@ -1,4 +1,4 @@
-package me.marin.statsplugin;
+package me.marin.statsplugin.util;
 
 import javax.annotation.Nullable;
 

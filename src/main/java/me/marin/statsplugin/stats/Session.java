@@ -1,7 +1,7 @@
 package me.marin.statsplugin.stats;
 
-import me.marin.statsplugin.StatsPluginUtil;
-import me.marin.statsplugin.VersionUtil;
+import me.marin.statsplugin.util.StatsPluginUtil;
+import me.marin.statsplugin.util.VersionUtil;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.util.ExceptionUtil;

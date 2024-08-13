@@ -1,7 +1,7 @@
 package me.marin.statsplugin.io;
 
-import me.marin.statsplugin.FileStillEmptyException;
-import me.marin.statsplugin.StatsPluginUtil;
+import me.marin.statsplugin.util.FileStillEmptyException;
+import me.marin.statsplugin.util.StatsPluginUtil;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.management.ActiveWindowManager;

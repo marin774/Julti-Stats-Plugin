@@ -2,7 +2,7 @@ package me.marin.statsplugin.io;
 
 import com.google.gson.JsonObject;
 import me.marin.statsplugin.StatsPlugin;
-import me.marin.statsplugin.StatsPluginUtil;
+import me.marin.statsplugin.util.StatsPluginUtil;
 import me.marin.statsplugin.stats.Session;
 import me.marin.statsplugin.stats.StatsRecord;
 import org.apache.logging.log4j.Level;

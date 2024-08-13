@@ -3,9 +3,7 @@ package me.marin.statsplugin.io;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import me.marin.statsplugin.StatsPluginUtil;
 
-import java.io.File;
 import java.util.*;
 
 public class RecordParser {

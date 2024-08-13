@@ -2,7 +2,7 @@ package me.marin.statsplugin.gui;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import me.marin.statsplugin.StatsPluginUtil;
+import me.marin.statsplugin.util.StatsPluginUtil;
 import me.marin.statsplugin.io.OldRecordBopperRunnable;
 import me.marin.statsplugin.io.StatsPluginSettings;
 import me.marin.statsplugin.stats.Session;

@@ -3,7 +3,7 @@ package me.marin.statsplugin.io;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
-import me.marin.statsplugin.VersionUtil;
+import me.marin.statsplugin.util.VersionUtil;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.util.ExceptionUtil;

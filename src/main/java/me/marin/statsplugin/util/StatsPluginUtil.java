@@ -1,4 +1,4 @@
-package me.marin.statsplugin;
+package me.marin.statsplugin.util;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

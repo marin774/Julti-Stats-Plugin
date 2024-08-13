@@ -5,6 +5,9 @@ import me.marin.statsplugin.gui.OBSOverlayGUI;
 import me.marin.statsplugin.gui.StatsGUI;
 import me.marin.statsplugin.io.*;
 import me.marin.statsplugin.stats.Session;
+import me.marin.statsplugin.util.GoogleSheets;
+import me.marin.statsplugin.util.StatsPluginUtil;
+import me.marin.statsplugin.util.VersionUtil;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.JultiAppLaunch;
@@ -22,8 +25,8 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 
-import static me.marin.statsplugin.VersionUtil.CURRENT_VERSION;
-import static me.marin.statsplugin.VersionUtil.version;
+import static me.marin.statsplugin.util.VersionUtil.CURRENT_VERSION;
+import static me.marin.statsplugin.util.VersionUtil.version;
 
 public class StatsPlugin implements PluginInitializer {
 

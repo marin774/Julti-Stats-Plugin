@@ -1,14 +1,14 @@
 package me.marin.statsplugin.stats;
 
 import com.google.api.services.sheets.v4.model.*;
-import me.marin.statsplugin.StatsPluginUtil;
+import me.marin.statsplugin.util.StatsPluginUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static me.marin.statsplugin.StatsPluginUtil.formatTime;
+import static me.marin.statsplugin.util.StatsPluginUtil.formatTime;
 
 public final class StatsRecord {
     private final String dateTime;
