@@ -19,6 +19,7 @@ import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.util.ExceptionUtil;
 
 import java.io.*;
+import java.net.SocketTimeoutException;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.util.*;
@@ -201,9 +202,12 @@ public class GoogleSheets {
                 StatsFileIO.getInstance().clearTempStats();
             } catch (Exception e) {
                 // Failed to update Google Sheets, either no internet, or GSheets is unavailable
-                // Save the record to a temp file, and then dump all runs from temp.csv next time
+                // Save the record to a temp file, and then upload all runs from temp.csv on next run
                 StatsFileIO.getInstance().writeTempStats(record);
-                Julti.log(Level.ERROR, "Failed to update Google Sheets (run was saved locally): " + ExceptionUtil.toDetailedString(e));
+
+                if (!(e instanceof SocketTimeoutException)) {
+                    Julti.log(Level.ERROR, "Failed to update Google Sheets (run was saved locally): " + ExceptionUtil.toDetailedString(e));
+                }
             }
         });
 

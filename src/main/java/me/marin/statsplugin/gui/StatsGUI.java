@@ -6,6 +6,7 @@ import me.marin.statsplugin.util.StatsPluginUtil;
 import me.marin.statsplugin.io.OldRecordBopperRunnable;
 import me.marin.statsplugin.io.StatsPluginSettings;
 import me.marin.statsplugin.stats.Session;
+import me.marin.statsplugin.util.UpdateUtil;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.gui.JultiGUI;
@@ -39,6 +40,8 @@ public class StatsGUI extends JFrame {
     private JPanel setupPanel;
     private JPanel settingsPanel;
     private JCheckBox simulateOfflineCheckbox;
+    private JButton checkForUpdatesButton;
+    private JPanel checkForUpdatesPanel;
 
     private OBSOverlayGUI obsOverlayGUI;
     private SetupGUI setupGUI;
@@ -67,104 +70,6 @@ public class StatsGUI extends JFrame {
             Julti.log(Level.INFO, settings.trackerEnabled ? "Now tracking stats." : "No longer tracking stats.");
         });
 
-        // This is used for testing Google Sheets as if you or Google Sheets are down
-        /*
-        simulateOfflineCheckbox.addActionListener(e -> {
-            StatsPluginSettings settings = StatsPluginSettings.getInstance();
-            //settings.simulateNoInternet = simulateOfflineCheckbox.isSelected();
-            StatsPluginSettings.save();
-        });*/
-
-        /*
-        importCredentialsJsonButton.addActionListener(a -> {
-            try {
-                JFileChooser chooser = new JFileChooser();
-                FileNameExtensionFilter filter = new FileNameExtensionFilter("*.json", "json");
-                chooser.setFileFilter(filter);
-                int returnVal = chooser.showOpenDialog(null);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File file = chooser.getSelectedFile();
-                    Files.copy(file.toPath(), GOOGLE_SHEETS_CREDENTIALS_PATH, StandardCopyOption.REPLACE_EXISTING);
-
-                    StatsPluginSettings settings = StatsPluginSettings.getInstance();
-                    if (!settings.useSheets) {
-                        settings.useSheets = true;
-                        StatsPluginSettings.save();
-                        Julti.log(Level.INFO, "Updated settings to use Google Sheets.");
-                    }
-
-                    Julti.log(Level.INFO, "Imported credentials.json. Trying to connect to Google Sheets.");
-                    boolean connected = reloadGoogleSheets();
-                    if (!connected) {
-                        JOptionPane.showMessageDialog(null, "Imported credentials.json, but did not connect to Google Sheets. Check Julti logs for help.");
-                    }
-                }
-            } catch (Exception e) {
-                Julti.log(Level.ERROR, "Failed to import credentials.json:\n" + ExceptionUtil.toDetailedString(e));
-            }
-        });
-
-        importSettingsJsonButton.addActionListener(a -> {
-            try {
-                JFileChooser chooser = new JFileChooser();
-                FileNameExtensionFilter filter = new FileNameExtensionFilter("*.json", "json");
-                chooser.setFileFilter(filter);
-                int returnVal = chooser.showOpenDialog(null);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File file = chooser.getSelectedFile();
-                    Files.copy(file.toPath(), STATS_SETTINGS_PATH, StandardCopyOption.REPLACE_EXISTING);
-
-                    boolean wasEnabled = StatsPluginSettings.getInstance().trackerEnabled;
-
-                    StatsPluginSettings.load();
-                    updateGUI();
-
-                    boolean isEnabled = StatsPluginSettings.getInstance().trackerEnabled;
-
-                    JOptionPane.showMessageDialog(null, "Imported settings." + ((wasEnabled ^ isEnabled) ? "NOTE: Tracker is now " + (isEnabled ? "enabled." : "disabled.") : ""));
-                    Julti.log(Level.INFO, "Imported & reloaded settings.");
-                }
-            } catch (Exception e) {
-                Julti.log(Level.ERROR, "Failed to import settings.json:\n" + ExceptionUtil.toDetailedString(e));
-            }
-        });
-
-        importStatsCsvButton.addActionListener(a -> {
-            try {
-                int option = JOptionPane.showOptionDialog(
-                        null,
-                        "This will overwrite existing Julti stats. Are you sure you want to import stats?",
-                        "Warning",
-                        YES_NO_OPTION,
-                        WARNING_MESSAGE,
-                        null,
-                        null,
-                        "Yes");
-
-                if (option != 0) {
-                    return;
-                }
-
-                JFileChooser chooser = new JFileChooser();
-                FileNameExtensionFilter filter = new FileNameExtensionFilter("*.csv", "csv");
-                chooser.setFileFilter(filter);
-                int returnVal = chooser.showOpenDialog(null);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File file = chooser.getSelectedFile();
-                    Files.copy(file.toPath(), StatsFileIO.STATS_CSV_PATH, StandardCopyOption.REPLACE_EXISTING);
-
-                    StatsPluginSettings.load();
-                    StatsPluginSettings.save();
-
-                    JOptionPane.showMessageDialog(null, "Imported local stats.");
-                    Julti.log(Level.INFO, "Imported local stats.");
-                }
-
-            } catch (Exception e) {
-                Julti.log(Level.ERROR, "Failed to import stats.csv:\n" + ExceptionUtil.toDetailedString(e));
-            }
-        });
-        */
         setupButton.addActionListener(a -> {
             if (setupGUI == null || setupGUI.isClosed()) {
                 setupGUI = new SetupGUI();
@@ -172,7 +77,6 @@ public class StatsGUI extends JFrame {
                 setupGUI.requestFocus();
             }
         });
-
 
         openSettingsJson.addActionListener(a -> {
             try {
@@ -245,12 +149,16 @@ public class StatsGUI extends JFrame {
             JOptionPane.showMessageDialog(null, "New session started.");
         });
 
+        checkForUpdatesButton.addActionListener(a -> {
+            UpdateUtil.checkForUpdatesAndUpdate(false);
+        });
     }
 
     public void updateGUI() {
         trackerEnabledCheckbox.setSelected(StatsPluginSettings.getInstance().trackerEnabled);
 
         settingsPanel.setVisible(StatsPluginSettings.getInstance().completedSetup);
+        checkForUpdatesPanel.setVisible(StatsPluginSettings.getInstance().completedSetup);
         setupPanel.setVisible(!StatsPluginSettings.getInstance().completedSetup);
 
         openStatsBrowserButton.setVisible(StatsPluginSettings.getInstance().useSheets);
@@ -260,6 +168,10 @@ public class StatsGUI extends JFrame {
 
     public boolean isClosed() {
         return this.isClosed;
+    }
+
+    // force intellij to update gui code
+    public static void main(String[] args) {
     }
 
     {
@@ -306,12 +218,22 @@ public class StatsGUI extends JFrame {
         final JLabel label1 = new JLabel();
         label1.setText("Complete the quick Setup so you can start using the tracker.");
         setupPanel.add(label1);
+        checkForUpdatesPanel = new JPanel();
+        checkForUpdatesPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel1.add(checkForUpdatesPanel, gbc);
+        checkForUpdatesButton = new JButton();
+        checkForUpdatesButton.setText("Check for updates");
+        checkForUpdatesPanel.add(checkForUpdatesButton);
         settingsPanel = new JPanel();
         settingsPanel.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
         settingsPanel.setVisible(true);
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.BOTH;
         panel1.add(settingsPanel, gbc);

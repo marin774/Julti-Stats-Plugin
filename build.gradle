@@ -34,13 +34,17 @@ repositories {
 dependencies {
     // Choose Julti version: https://jitpack.io/#DuncanRuns/Julti
     compileOnly 'com.github.DuncanRuns:Julti:v1.5.3'
-    // compile 'com.intellij:forms_rt:7.0.3'
+
+    // lombok
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
 
     // Google Sheets API
     shadow 'com.google.apis:google-api-services-sheets:v4-rev20220927-2.0.0'
     shadow 'com.google.auth:google-auth-library-oauth2-http:1.16.1'
-    shadow group: 'com.jgoodies', name: 'jgoodies-forms', version: '1.9.0'
 
+    // Jgoodies (GUI)
+    shadow group: 'com.jgoodies', name: 'jgoodies-forms', version: '1.9.0'
 }
 
 

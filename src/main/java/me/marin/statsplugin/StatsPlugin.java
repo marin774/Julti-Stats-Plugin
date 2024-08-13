@@ -7,6 +7,7 @@ import me.marin.statsplugin.io.*;
 import me.marin.statsplugin.stats.Session;
 import me.marin.statsplugin.util.GoogleSheets;
 import me.marin.statsplugin.util.StatsPluginUtil;
+import me.marin.statsplugin.util.UpdateUtil;
 import me.marin.statsplugin.util.VersionUtil;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
@@ -31,6 +32,7 @@ import static me.marin.statsplugin.util.VersionUtil.version;
 public class StatsPlugin implements PluginInitializer {
 
     public static final Path STATS_FOLDER_PATH = JultiOptions.getJultiDir().resolve("stats-plugin");
+    public static final Path PLUGINS_PATH = JultiOptions.getJultiDir().resolve("plugins");
     public static final Path GOOGLE_SHEETS_CREDENTIALS_PATH = STATS_FOLDER_PATH.resolve("credentials.json");
     public static final Path STATS_SETTINGS_PATH = STATS_FOLDER_PATH.resolve("settings.json");
     public static final Path OBS_OVERLAY_TEMPLATE_PATH = STATS_FOLDER_PATH.resolve("obs-overlay-template");
@@ -98,6 +100,8 @@ public class StatsPlugin implements PluginInitializer {
             }
             StatsPluginUtil.runAsync("records-folder-watcher", new RecordsFolderWatcher(recordsPath));
             StatsPluginUtil.runTimerAsync(new InstanceManagerRunnable(), 1000);
+
+            UpdateUtil.checkForUpdatesAndUpdate(true);
         });
     }
 

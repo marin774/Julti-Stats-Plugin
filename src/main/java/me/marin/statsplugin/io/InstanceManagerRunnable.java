@@ -12,32 +12,34 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * Creates new rsg-attempts.txt watchers when new instances appear.
- * <p>
- * Ideally this shouldn't even be a thing because SeedQueue is single-instance, but
- * it's used as a safety net if you relaunch instances or have other instances in background etc.
  */
 public class InstanceManagerRunnable implements Runnable {
 
     public static final Map<String, RSGAttemptsWatcher> instanceWatcherMap = new HashMap<>();
 
-    private final HashSet<String> previousActiveInstancePaths = new HashSet<>();
+    private final HashSet<String> previousOpenInstancePaths = new HashSet<>();
 
     @Override
     public void run() {
-        HashSet<String> currentActiveInstancePaths = InstanceManager.getInstanceManager().getInstances().stream()
-                .filter(i -> !i.isWindowMarkedMissing())
-                .map(i -> i.getPath().toString())
-                .collect(Collectors.toCollection(HashSet::new));
+        Set<MinecraftInstance> currentOpenInstances = InstanceManager.getInstanceManager().getInstances().stream()
+                .filter(i -> !i.checkWindowMissing())
+                .collect(Collectors.toSet());
 
-        HashSet<String> closedInstancePaths = new HashSet<>(previousActiveInstancePaths);
-        closedInstancePaths.removeAll(currentActiveInstancePaths);
-        if (currentActiveInstancePaths.size() != previousActiveInstancePaths.size()) {
-            Julti.log(Level.DEBUG, "previousActiveInstancePaths: " + previousActiveInstancePaths);
-            Julti.log(Level.DEBUG, "currentActiveInstancePaths: " + currentActiveInstancePaths);
+        Set<String> currentOpenInstancePaths = currentOpenInstances.stream()
+                .map(i -> i.getPath().toString())
+                .collect(Collectors.toSet());
+
+        HashSet<String> closedInstancePaths = new HashSet<>(previousOpenInstancePaths);
+        closedInstancePaths.removeAll(currentOpenInstancePaths);
+
+        if (currentOpenInstancePaths.size() != previousOpenInstancePaths.size()) {
+            Julti.log(Level.DEBUG, "previousOpenInstancePaths: " + previousOpenInstancePaths);
+            Julti.log(Level.DEBUG, "currentActiveInstancePaths: " + currentOpenInstancePaths);
             Julti.log(Level.DEBUG, "closedInstancePaths: " + closedInstancePaths);
         }
 
@@ -48,11 +50,8 @@ public class InstanceManagerRunnable implements Runnable {
             Julti.log(Level.DEBUG, "Closed a FileWatcher for instance: " + closedInstancePath);
         }
 
-        for (MinecraftInstance instance : InstanceManager.getInstanceManager().getInstances()) {
+        for (MinecraftInstance instance : currentOpenInstances) {
             String path = instance.getPath().toString();
-            if (!currentActiveInstancePaths.contains(path)) {
-                continue;
-            }
             if (!instanceWatcherMap.containsKey(path)) {
                 Path rsgAttemptsPath = Paths.get(instance.getPath().toString(), "config", "mcsr", "atum", "rsg-attempts.txt");
 
@@ -73,8 +72,8 @@ public class InstanceManagerRunnable implements Runnable {
             }
         }
 
-        previousActiveInstancePaths.clear();
-        previousActiveInstancePaths.addAll(currentActiveInstancePaths);
+        previousOpenInstancePaths.clear();
+        previousOpenInstancePaths.addAll(currentOpenInstancePaths);
     }
 
 }
