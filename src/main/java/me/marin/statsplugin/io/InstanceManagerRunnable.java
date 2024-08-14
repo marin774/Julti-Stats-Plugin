@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.instance.MinecraftInstance;
 import xyz.duncanruns.julti.management.InstanceManager;
+import xyz.duncanruns.julti.util.ExceptionUtil;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,6 +27,14 @@ public class InstanceManagerRunnable implements Runnable {
 
     @Override
     public void run() {
+        try {
+            doRun();
+        } catch (Exception e) {
+            Julti.log(Level.DEBUG, "Error while tracking resets & wall time:\n" + ExceptionUtil.toDetailedString(e));
+        }
+    }
+
+    public void doRun() {
         Set<MinecraftInstance> currentOpenInstances = InstanceManager.getInstanceManager().getInstances().stream()
                 .filter(i -> !i.checkWindowMissing())
                 .collect(Collectors.toSet());
@@ -37,17 +46,13 @@ public class InstanceManagerRunnable implements Runnable {
         HashSet<String> closedInstancePaths = new HashSet<>(previousOpenInstancePaths);
         closedInstancePaths.removeAll(currentOpenInstancePaths);
 
-        if (currentOpenInstancePaths.size() != previousOpenInstancePaths.size()) {
-            Julti.log(Level.DEBUG, "previousOpenInstancePaths: " + previousOpenInstancePaths);
-            Julti.log(Level.DEBUG, "currentActiveInstancePaths: " + currentOpenInstancePaths);
-            Julti.log(Level.DEBUG, "closedInstancePaths: " + closedInstancePaths);
-        }
-
         for (String closedInstancePath : closedInstancePaths) {
-            // close old watchers (this instance was just closed)
-            instanceWatcherMap.get(closedInstancePath).stop();
-            instanceWatcherMap.remove(closedInstancePath);
-            Julti.log(Level.DEBUG, "Closed a FileWatcher for instance: " + closedInstancePath);
+            if (instanceWatcherMap.containsKey(closedInstancePath)) {
+                // close old watchers (this instance was just closed)
+                instanceWatcherMap.get(closedInstancePath).stop();
+                instanceWatcherMap.remove(closedInstancePath);
+                Julti.log(Level.DEBUG, "Closed a FileWatcher for instance: " + closedInstancePath);
+            }
         }
 
         for (MinecraftInstance instance : currentOpenInstances) {

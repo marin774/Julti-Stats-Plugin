@@ -1,5 +1,6 @@
 package me.marin.statsplugin.io;
 
+import lombok.Getter;
 import me.marin.statsplugin.util.FileStillEmptyException;
 import me.marin.statsplugin.util.StatsPluginUtil;
 import org.apache.logging.log4j.Level;
@@ -57,8 +58,11 @@ public class RSGAttemptsWatcher extends FileWatcher {
         }
     }
 
+    @Getter
     private int wallResetsSincePrev = 0;
+    @Getter
     private long breakRTASincePrev = 0;
+    @Getter
     private long wallTimeSincePrev = 0;
 
     private long lastActionMillis = 0;
@@ -85,12 +89,12 @@ public class RSGAttemptsWatcher extends FileWatcher {
         if (atumResets < 0 || atumResets == previousAtumResets) {
             return;
         }
-        Julti.log(Level.DEBUG, "Resets: " + atumResets + ", state: " + state);
+        log(Level.DEBUG, "Resets: " + atumResets + ", state: " + state, atumResets);
 
         if (isWallActive) {
             long delta = atumResets - previousAtumResets;
             wallResetsSincePrev += (int) delta;
-            Julti.log(Level.DEBUG, "Wall resets +" + delta + " (" + wallResetsSincePrev + " total).");
+            log(Level.DEBUG, "Wall resets +" + delta + " (" + wallResetsSincePrev + " total).", atumResets);
         }
         previousAtumResets = atumResets;
 
@@ -102,10 +106,10 @@ public class RSGAttemptsWatcher extends FileWatcher {
             if (isWallActive) {
                 if (delta > StatsPluginSettings.getInstance().breakThreshold * 1000L) {
                     breakRTASincePrev += delta;
-                    Julti.log(Level.DEBUG, "Break RTA +" + delta + "ms (" + breakRTASincePrev + "ms total).");
+                    log(Level.DEBUG, "Break RTA +" + delta + "ms (" + breakRTASincePrev + "ms total).", atumResets);
                 } else {
                     wallTimeSincePrev += delta;
-                    Julti.log(Level.DEBUG, "Wall time since prev. +" + delta + "ms (" + wallTimeSincePrev + "ms total).");
+                    log(Level.DEBUG, "Wall time since prev. +" + delta + "ms (" + wallTimeSincePrev + "ms total).", atumResets);
                 }
             }
         }
@@ -117,22 +121,16 @@ public class RSGAttemptsWatcher extends FileWatcher {
         // ignored
     }
 
-    public int getWallResetsSincePrev() {
-        return wallResetsSincePrev;
-    }
-
-    public long getBreakRTASincePrev() {
-        return breakRTASincePrev;
-    }
-
-    public long getWallTimeSincePrev() {
-        return wallTimeSincePrev;
-    }
-
     public void reset() {
         wallResetsSincePrev = 0;
         breakRTASincePrev = 0;
         wallTimeSincePrev = 0;
+    }
+
+    private void log(Level level, String message, long atumResets) {
+        if (atumResets % 50 == 0) {
+            Julti.log(level, message);
+        }
     }
 
 }

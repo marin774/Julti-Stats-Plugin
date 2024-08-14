@@ -52,9 +52,6 @@ public class RecordsFolderWatcher extends FileWatcher {
         if (!StatsPluginSettings.getInstance().trackerEnabled) {
             return;
         }
-        if (file.getName().startsWith("Benchmark Reset #")) {
-            return;
-        }
         if (completedRunsRecordIds.contains(file.getName()) || mostRecentRecordIds.contains(file.getName())) {
             Julti.log(Level.DEBUG, "Not saving run because it was already completed/recently updated.");
             return;
@@ -71,8 +68,6 @@ public class RecordsFolderWatcher extends FileWatcher {
             Julti.log(Level.DEBUG, "Not saving run because it's not rsg.");
             return;
         }
-
-        Julti.log(Level.DEBUG, "records> it is rsg");
 
 
         long finalRTA = recordJSON.get("final_rta").getAsLong();

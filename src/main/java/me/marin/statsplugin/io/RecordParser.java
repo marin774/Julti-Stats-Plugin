@@ -64,7 +64,6 @@ public class RecordParser {
         return true;
     }
 
-
     public long getDate() {
         return record.get("date").getAsLong();
     }
