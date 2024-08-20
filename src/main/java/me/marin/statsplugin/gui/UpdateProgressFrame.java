@@ -1,4 +1,4 @@
-package me.marin.statsplugin.util;
+package me.marin.statsplugin.gui;
 
 import javax.swing.*;
 import java.awt.*;

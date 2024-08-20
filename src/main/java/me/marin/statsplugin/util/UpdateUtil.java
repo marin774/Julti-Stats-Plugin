@@ -4,6 +4,7 @@ import com.github.tuupertunut.powershelllibjava.PowerShellExecutionException;
 import com.google.gson.JsonObject;
 import lombok.Data;
 import me.marin.statsplugin.StatsPlugin;
+import me.marin.statsplugin.gui.UpdateProgressFrame;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;

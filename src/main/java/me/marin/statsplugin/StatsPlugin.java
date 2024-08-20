@@ -101,6 +101,7 @@ public class StatsPlugin implements PluginInitializer {
             StatsPluginUtil.runAsync("records-folder-watcher", new RecordsFolderWatcher(recordsPath));
             StatsPluginUtil.runTimerAsync(new InstanceManagerRunnable(), 1000);
 
+            VersionUtil.deleteOldVersionJars();
             UpdateUtil.checkForUpdatesAndUpdate(true);
         });
     }
@@ -108,7 +109,7 @@ public class StatsPlugin implements PluginInitializer {
     private static VersionUtil.Version getVersionFromSettings() {
         String versionString = StatsPluginSettings.getInstance().version;
         if (versionString == null) {
-            versionString = "0.3.2"; // This is hardcoded because I'm adding versioning to settings after 0.3.2
+            versionString = "0.3.2"; // This is hardcoded because versioning was added after 0.3.2
         }
         return VersionUtil.version(versionString);
     }

@@ -46,6 +46,7 @@ public class Session {
         long enters = calculateEnters();
         double average = calculateAverage();
         double nph = calculateNPH();
+        double rpe = calculateRPE();
         if (Double.isNaN(nph)) {
             nph = 0;
         }
@@ -55,6 +56,7 @@ public class Session {
             template = template.replaceAll("%enters%", String.valueOf(enters));
             template = template.replaceAll("%nph%", String.format(Locale.US, "%.1f", nph));
             template = template.replaceAll("%average%", StatsPluginUtil.formatTime((long)average, false));
+            template = template.replaceAll("%rpe%", String.format(Locale.US, "%.0f", rpe));
 
             Julti.log(Level.DEBUG, "Setting overlay to:\n" + template);
             Files.write(OBS_OVERLAY_PATH, template.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
@@ -96,8 +98,19 @@ public class Session {
         return 60 / (totalTimePlayedMinutes / enters);
     }
 
+    // Resets per enter
+    public double calculateRPE() {
+        long enters = calculateEnters();
+        long resets = records.size();
+        for (StatsRecord record : records) {
+            resets += Long.parseLong(record.wallResetsSincePrev());
+            resets += Long.parseLong(record.playedSincePrev());
+        }
+        return (double) resets / enters;
+    }
+
     public StatsRecord getLatestRecord() {
-        if (records.size() == 0) return null;
+        if (records.isEmpty()) return null;
         return records.get(records.size() - 1);
     }
 
