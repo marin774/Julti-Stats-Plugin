@@ -66,7 +66,6 @@ public class GoogleSheets {
 
             Julti.log(Level.INFO, "Connected to Google Sheets!");
             setHeaderColumns();
-            tempFix();
             return true;
         } catch (Exception e) {
             Julti.log(Level.ERROR, "Failed to connect to Google Sheets: " + ExceptionUtil.toDetailedString(e));
@@ -86,31 +85,6 @@ public class GoogleSheets {
                     .getSheets()
                     .get(0);
         }
-    }
-
-    /**
-     * @deprecated Temporary fix for a bug in older versions, will be removed in a later version
-     */
-    private void tempFix() {
-        StatsPluginUtil.runAsync("google-sheets", () -> {
-            try {
-                getRawDataSheet();
-                Integer sheetId = rawDataSheet.getProperties().getSheetId();
-
-                List<Request> requests = new ArrayList<>();
-                requests.add(new Request().setFindReplace(
-                        new FindReplaceRequest()
-                                .setFind("Buried Treasure w/ TNT")
-                                .setMatchCase(true)
-                                .setReplacement("Buried Treasure w/ tnt")
-                                .setSheetId(sheetId)
-                ));
-                service.spreadsheets().batchUpdate(spreadsheetId, new BatchUpdateSpreadsheetRequest().setRequests(requests)).execute();
-
-            } catch (IOException e) {
-                Julti.log(Level.ERROR, "Failed to update Google Sheets: " + ExceptionUtil.toDetailedString(e));
-            }
-        });
     }
 
     private void setHeaderColumns() {

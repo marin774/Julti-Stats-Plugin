@@ -73,7 +73,7 @@ public abstract class FileWatcher implements Runnable {
         } catch (Exception e) {
             Julti.log(Level.ERROR, "Unknown exception while reading:\n" + ExceptionUtil.toDetailedString(e));
         }
-        Julti.log(Level.DEBUG, "FileWatcher was closed " + (name));
+        Julti.log(Level.DEBUG, "FileWatcher was closed " + name);
     }
 
     protected abstract void handleFileUpdated(File file);
