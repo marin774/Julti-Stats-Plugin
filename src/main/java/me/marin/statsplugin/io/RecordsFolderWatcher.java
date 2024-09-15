@@ -25,6 +25,7 @@ public class RecordsFolderWatcher extends FileWatcher {
             .appendPattern("M/d/yyyy HH:mm:ss")
             .toFormatter()
             .withZone(ZoneId.systemDefault());
+    private static final long ONE_HOUR_MS = 1000 * 60 * 60;
 
     private int wallResetsSincePrev = 0;
     private int splitlessResets = 0;
@@ -68,7 +69,10 @@ public class RecordsFolderWatcher extends FileWatcher {
             Julti.log(Level.DEBUG, "Not saving run because it's not rsg.");
             return;
         }
-
+        if (recordParser.getRTA() - recordParser.getIGT() > ONE_HOUR_MS) {
+            Julti.log(Level.DEBUG, "Not saving run because it happened too long ago.");
+            return;
+        }
 
         long finalRTA = recordJSON.get("final_rta").getAsLong();
         Long LAN = recordParser.getOpenLAN();
@@ -77,7 +81,6 @@ public class RecordsFolderWatcher extends FileWatcher {
         }
 
         Julti.log(Level.DEBUG, "records> finalRTA " + finalRTA);
-
 
         // wall time calculation
         for (RSGAttemptsWatcher attemptsWatcher : InstanceManagerRunnable.instanceWatcherMap.values()) {
