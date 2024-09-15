@@ -23,7 +23,7 @@ public class Session {
 
     public static final String SESSION_MARKER = "$J" + VersionUtil.CURRENT_VERSION;
 
-    public static Session merge(Session older, Session newer) {
+    /*public static Session merge(Session older, Session newer) {
         Session session = new Session();
         for (StatsRecord record : older.records) {
             session.addRun(record, false);
@@ -32,7 +32,7 @@ public class Session {
             session.addRun(record, false);
         }
         return session;
-    }
+    }*/
 
     public void addRun(StatsRecord record, boolean isNewRun) {
         records.add(record);
@@ -46,9 +46,12 @@ public class Session {
         long enters = calculateEnters();
         double average = calculateAverage();
         double nph = calculateNPH();
-        double rpe = calculateRPE();
         if (Double.isNaN(nph)) {
             nph = 0;
+        }
+        double rpe = calculateRPE();
+        if (Double.isNaN(rpe)) {
+            rpe = 0;
         }
 
         try {
