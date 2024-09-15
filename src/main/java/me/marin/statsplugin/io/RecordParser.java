@@ -33,7 +33,7 @@ public class RecordParser {
         this.advKeys = adv != null ? adv.keySet() : Collections.emptySet();
 
         JsonObject stats = this.record.keySet().contains("stats") ? this.record.get("stats").getAsJsonObject() : null;
-        if (stats != null && stats.keySet().size() > 0) {
+        if (stats != null && !stats.keySet().isEmpty()) {
             String uuid = stats.keySet().iterator().next();
             stats = stats.get(uuid).getAsJsonObject().get("stats").getAsJsonObject();
         }

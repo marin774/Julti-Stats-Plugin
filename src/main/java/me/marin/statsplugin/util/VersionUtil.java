@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class VersionUtil {
 
-    public static final Version CURRENT_VERSION = new Version(0, 5, 6);
+    public static final Version CURRENT_VERSION = new Version(0, 5, 7);
 
     public static Version version(String version) {
         String[] parts = version.split("\\.");
