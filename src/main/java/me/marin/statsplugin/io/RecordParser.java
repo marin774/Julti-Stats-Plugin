@@ -87,20 +87,31 @@ public class RecordParser {
     }
 
     public boolean hasObtainedWood() {
-        if (!advKeys.contains("minecraft:recipes/misc/charcoal")) return false;
+        if (!advKeys.contains("minecraft:recipes/misc/charcoal")) {
+            return false;
+        }
         JsonObject criteria = getNestedJsonObject(adv, "minecraft:recipes/misc/charcoal", "criteria");
+        if (criteria == null) {
+            return false;
+        }
         return criteria.keySet().contains("has_log");
     }
 
     public Long getWoodObtainedTime() {
-        if (!hasObtainedWood()) return null;
-        JsonObject hasLog = getNestedJsonObject(adv, "minecraft:recipes/misc/charcoal", "criteria", "has_log");
-        long time = getLong(hasLog, "igt");
-        Long LAN = getOpenLAN();
-        if (LAN != null && LAN <= time) {
+        if (!hasObtainedWood()) {
             return null;
         }
-        return time;
+        JsonObject hasLog = getNestedJsonObject(adv, "minecraft:recipes/misc/charcoal", "criteria", "has_log");
+        if (hasLog == null) {
+            return null;
+        }
+        Long LAN = getOpenLAN();
+        long IGT = getLong(hasLog, "igt");
+        long RTA = getLong(hasLog, "rta");
+        if (LAN != null && LAN <= RTA) {
+            return null;
+        }
+        return IGT;
     }
 
     public boolean hasObtainedIron() {
@@ -110,43 +121,45 @@ public class RecordParser {
     public Long getIronObtainedTime() {
         if (!hasObtainedIron()) return null;
         JsonObject obtainedIron = getNestedJsonObject(adv, "minecraft:story/smelt_iron");
-        JsonElement timeElement = obtainedIron.get("igt");
-        if (timeElement == null || timeElement.isJsonNull()) {
+        if (obtainedIron == null) {
+            return null;
+        }
+        JsonElement IGTelement = obtainedIron.get("igt");
+        JsonElement RTAelement = obtainedIron.get("rta");
+        if (IGTelement == null || IGTelement.isJsonNull() || RTAelement == null || RTAelement.isJsonNull()) {
             return null;
         }
 
         Long LAN = getOpenLAN();
-        long time = timeElement.getAsLong();
-        if (LAN != null && LAN <= time) {
+        long IGT = getLong(obtainedIron, "igt");
+        long RTA = getLong(obtainedIron, "rta");
+
+        if (LAN != null && LAN <= RTA) {
             return null;
         }
-        return time;
+        return IGT;
     }
 
     public boolean hasObtainedPickaxe() {
-        if (craftedKeys.contains("minecraft:diamond_pickaxe")) return true;
+        if (craftedKeys.contains("minecraft:diamond_pickaxe")) {
+            return true;
+        }
         JsonObject ironPickaxe = getNestedJsonObject(adv, "minecraft:story/iron_tools", "criteria", "iron_pickaxe");
         return (ironPickaxe != null);
     }
 
     public Long getPickaxeTime() {
         JsonObject ironPickaxe = getNestedJsonObject(adv, "minecraft:story/iron_tools", "criteria", "iron_pickaxe");
-        if (ironPickaxe == null) return null;
-        Long LAN = getOpenLAN();
-        long time = ironPickaxe.get("igt").getAsLong();
-        if (LAN != null && LAN <= time) {
+        if (ironPickaxe == null) {
             return null;
         }
-        return time;
-        /*
-            return (time == null || time.isJsonNull()) ? null : time.getAsLong();
-        } else {
-            TODO: check if this actually works (diamond pickaxe craft igt == iron/gold axe craft igt)
-            if (craftedKeys.contains("minecraft:diamond_pickaxe")) {
-                if (advKeys.contains("minecraft:recipes/misc/gold_nugget_from_smelting"))
-            }
+        Long LAN = getOpenLAN();
+        long IGT = ironPickaxe.get("igt").getAsLong();
+        long RTA = ironPickaxe.get("rta").getAsLong();
+        if (LAN != null && LAN <= RTA) {
+            return null;
         }
-        */
+        return IGT;
     }
 
 
@@ -326,19 +339,20 @@ public class RecordParser {
                 // unimportant split
                 continue;
             }
-            long time = obj.get("igt").getAsLong();
-            if (LAN != null && LAN <= time) {
+            long IGT = getLong(obj, "igt");
+            long RTA = getLong(obj, "rta");
+            if (LAN != null && LAN <= RTA) {
                 // Split was cheated
                 continue;
             }
-            map.put(splitName, time);
+            map.put(splitName, IGT);
         }
         return map;
     }
 
     public boolean hasDoneAnySplit() {
         if (hasObtainedWood() || hasObtainedIron() || hasObtainedPickaxe()) return true;
-        return getTimelinesMap().size() > 0;
+        return !getTimelinesMap().isEmpty();
     }
 
     private static long getAdvancementIGT(JsonObject advancements, String advancement) {
