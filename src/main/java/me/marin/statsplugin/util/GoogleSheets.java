@@ -20,6 +20,7 @@ import xyz.duncanruns.julti.util.ExceptionUtil;
 
 import java.io.*;
 import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.util.*;
@@ -179,7 +180,7 @@ public class GoogleSheets {
                 // Save the record to a temp file, and then upload all runs from temp.csv on next run
                 StatsFileIO.getInstance().writeTempStats(record);
 
-                if (!(e instanceof SocketTimeoutException)) {
+                if (!(e instanceof SocketTimeoutException || e instanceof UnknownHostException)) {
                     Julti.log(Level.ERROR, "Failed to update Google Sheets (run was saved locally): " + ExceptionUtil.toDetailedString(e));
                 }
             }
